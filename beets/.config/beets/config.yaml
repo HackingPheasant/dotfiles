@@ -53,14 +53,14 @@ import:
 # e.g. If I had an album with the albumtype $soundtrack and $compilation
 # Then the path that matchs first takes precedence.
 paths:
-    default: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} %if{$bootleg, [Bootleg]}/%if{$multidisc,Disc $disc/}$track. $title
-    vinyl:1: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} [Vinyl] %if{$bootleg, [Bootleg]}/%if{$multidisc,Disc $disc/}$track_alt. $title
-    cassette:1: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} [Cassette] %if{$bootleg, [Bootleg]}/%if{$multidisc,Disc $disc/}$track_alt. $title
+    default: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} %if{$bootleg,[Bootleg]}/%if{$multidisc,Disc $disc/}$track. $title
+    vinyl:1: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} [Vinyl] %if{$bootleg,[Bootleg]}/%if{$multidisc,Disc $disc/}$track_alt. $title
+    cassette:1: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} [Cassette] %if{$bootleg,[Bootleg]}/%if{$multidisc,Disc $disc/}$track_alt. $title
     albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{,media mastering label catalognum albumdisambig} ($year)/%if{$multidisc,Disc $disc/}$track. %if{$multiartist,$artist -} $title
     christmas:1: Christmas Music Collection/$artist - $title
     singleton: Music/Non-Album/$artist/$title
-    comp: Music/Compilations/$album%aunique{,media mastering label catalognum albumdisambig} ($year) %if{$bootleg, [Bootleg]}/%if{$multidisc,Disc $disc/}$track. $artist - $title
-    albumtype:other: Other/$albumartist/$album%aunique{,media mastering label catalognum albumdisambig} %if{$ep,%upper{[$albumtype]}}%if{$single,%title{[$albumtype]}}%if{$live,%title{[$albumtype]}} %if{$bootleg, [Bootleg]} ($year)/%if{$multidisc,Disc $disc/}$track. $title
+    comp: Music/Compilations/$album%aunique{,media mastering label catalognum albumdisambig} ($year) %if{$bootleg,[Bootleg]}/%if{$multidisc,Disc $disc/}$track. $artist - $title
+    albumtype:other: Other/$albumartist/$album%aunique{,media mastering label catalognum albumdisambig} %if{$ep,%upper{[$albumtype]}}%if{$single,%title{[$albumtype]}}%if{$live,%title{[$albumtype]}} %if{$bootleg,[Bootleg]} ($year)/%if{$multidisc,Disc $disc/}$track. $title
     albumtype:audiobook: Audiobooks/$artist/$album%aunique{}/%if{$multidisc,Disc $disc/}$track. $title
 
 
