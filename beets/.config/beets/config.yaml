@@ -1,0 +1,109 @@
+############################################################################
+## Beets Configuration file.
+## ~./config/beets/config.yaml
+#############################################################################
+
+### Global Options
+library: /mnt/3TB-Drive-01/Audio/.musiclibrary.db
+directory: /mnt/3TB-Drive-01/Audio/
+plugins:
+    # Autotagger Extensions
+    - fromfilename
+    # Metadata Plugins
+    - edit
+    - fetchart
+    - embedart
+    - ftintitle
+    - lastgenre
+    # Path Format Plugins
+    - inline
+    # Interoperability
+    - badfiles
+    - play
+    # Miscellaneous Plugins
+    - convert
+    - duplicates
+    - export
+    - fuzzy
+    - info
+    - missing
+    - random
+    - web
+    # Other/External Plugins
+    - copyartifacts
+    #- check
+
+per_disc_numbering: true
+
+# General Configuration
+ui:
+    color: yes
+
+import:
+    write: yes
+    copy: yes
+    move: no
+    resume: ask
+    incremental: yes
+    quiet_fallback: skip
+    log: /mnt/3TB-Drive-01/Audio/.beet.log
+    bell: yes
+
+# Done in order listed. Default is special and will always go at the end.
+# e.g. If I had an album with the albumtype $soundtrack and $compilation
+# Then the path that matchs first takes precedence.
+paths:
+    default: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} %if{$bootleg, [Bootleg]}/%if{$multidisc,Disc $disc/}$track. $title
+    vinyl:1: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} [Vinyl] %if{$bootleg, [Bootleg]}/%if{$multidisc,Disc $disc/}$track_alt. $title
+    cassette:1: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} [Cassette] %if{$bootleg, [Bootleg]}/%if{$multidisc,Disc $disc/}$track_alt. $title
+    albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{,media mastering label catalognum albumdisambig} ($year)/%if{$multidisc,Disc $disc/}$track. %if{$multiartist,$artist -} $title
+    christmas:1: Christmas Music Collection/$artist - $title
+    singleton: Music/Non-Album/$artist/$title
+    comp: Music/Compilations/$album%aunique{,media mastering label catalognum albumdisambig} ($year) %if{$bootleg, [Bootleg]}/%if{$multidisc,Disc $disc/}$track. $artist - $title
+    albumtype:other: Other/$albumartist/$album%aunique{,media mastering label catalognum albumdisambig} %if{$ep,%upper{[$albumtype]}}%if{$single,%title{[$albumtype]}}%if{$live,%title{[$albumtype]}} %if{$bootleg, [Bootleg]} ($year)/%if{$multidisc,Disc $disc/}$track. $title
+    albumtype:audiobook: Audiobooks/$artist/$album%aunique{}/%if{$multidisc,Disc $disc/}$track. $title
+
+
+# Plugin Configurations
+fetchart:
+    store_source: yes
+
+embedart:
+    # I dont want album art auto-embedded
+    auto: no
+
+convert:
+# auto: yes
+    copy_album_art: yes
+    album_art_maxwidth: 600
+    dest: /mnt/3TB-Drive-01/Audio/Music [Mobile version]/
+    embed: yes
+    never_convert_lossy_files: yes
+    format: opus
+    formats:
+        opus:
+            command: ffmpeg -i $source -y -vn -acodec libopus -ab 128k $dest
+            extension: opus.ogg
+            # Above is to work around android media scanner, opus is included 
+            # in the file extension for making it easier on me in the future
+            # when android media scanner picks up opus extensions properly
+
+copyartifacts:
+    extensions: .cue .CUE .log .LOG .jpg .jpeg .png .accurip .md5 .txt
+    print_ignored: yes
+
+lastgenre:
+    count: 5
+
+item_fields:
+    multidisc: 1 if disctotal > 1 else 0
+    vinyl: 1 if media in ['12" Vinyl', '7" Vinyl', 'Vinyl'] else 0
+    cassette: 1 if media in ['Cassette'] else 0
+    bootleg: 1 if albumstatus in ['Bootleg'] else 0
+# multiartist: 1 if albumartist =='Various Artists' else 0
+    ep: 1 if albumtype == 'ep' else 0
+    single: 1 if albumtype == 'single' else 0
+    live: 1 if albumtype == 'live' else 0
+
+play:
+    command: /usr/bin/deadbeef
