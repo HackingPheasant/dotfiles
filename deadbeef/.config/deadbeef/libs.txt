@@ -1,0 +1,9 @@
+~/.local/lib/deadbeef/ddb_archive_reader.so
+~/.local/lib/deadbeef/ddb_misc_filebrowser_GTK3.so
+~/.local/lib/deadbeef/ddb_misc_playback_order_GTK3.so
+~/.local/lib/deadbeef/ddb_misc_quick_search_GTK3.so
+~/.local/lib/deadbeef/ddb_misc_waveform_GTK3.so
+~/.local/lib/deadbeef/ddb_vis_musical_spectrum_GTK3.so
+~/.local/lib/deadbeef/ddb_vis_spectrogram_GTK3.so
+~/.local/lib/deadbeef/ddb_vis_vu_meter_GTK3.so
+~/.local/lib/deadbeef/discord_presence.so
