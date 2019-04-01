@@ -30,7 +30,7 @@ plugins:
     - random
     - web
     # Other/External Plugins
-    - copyartifacts
+    # - copyartifacts
     #- check
 
 per_disc_numbering: true
@@ -56,10 +56,10 @@ paths:
     default: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} %if{$bootleg,[Bootleg]}/%if{$multidisc,Disc $disc/}$track. $title
     vinyl:1: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} [Vinyl] %if{$bootleg,[Bootleg]}/%if{$multidisc,Disc $disc/}$track_alt. $title
     cassette:1: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} [Cassette] %if{$bootleg,[Bootleg]}/%if{$multidisc,Disc $disc/}$track_alt. $title
-    albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{,media mastering label catalognum albumdisambig} ($year)/%if{$multidisc,Disc $disc/}$track. %if{$multiartist,$artist -} $title
+    albumtype:soundtrack: Original Sound Tracks (OST)/$album%aunique{,media mastering label catalognum albumdisambig} ($year)/%if{$multidisc,Disc $disc/}$track. %if{$multiartist,$artist -} $title
     christmas:1: Christmas Music Collection/$artist - $title
     singleton: Music/Non-Album/$artist/$title
-    comp: Music/Compilations/$album%aunique{,media mastering label catalognum albumdisambig} ($year) %if{$bootleg,[Bootleg]}/%if{$multidisc,Disc $disc/}$track. $artist - $title
+    comp: Compilations/$album%aunique{,media mastering label catalognum albumdisambig} ($year) %if{$bootleg,[Bootleg]}/%if{$multidisc,Disc $disc/}$track. $artist - $title
     albumtype:other: Other/$albumartist/$album%aunique{,media mastering label catalognum albumdisambig} %if{$ep,%upper{[$albumtype]}}%if{$single,%title{[$albumtype]}}%if{$live,%title{[$albumtype]}} %if{$bootleg,[Bootleg]} ($year)/%if{$multidisc,Disc $disc/}$track. $title
     albumtype:audiobook: Audiobooks/$artist/$album%aunique{}/%if{$multidisc,Disc $disc/}$track. $title
 
@@ -79,11 +79,16 @@ convert:
     dest: /mnt/3TB-Drive-01/Audio/Music [Mobile version]/
     embed: yes
     never_convert_lossy_files: yes
-    format: opus
+    format: mp3
     formats:
+        mp3:
+            command: ~/bin/flac-to-mp3.sh $source $dest
+            extension: mp3
         opus:
             command: ffmpeg -i $source -y -vn -acodec libopus -ab 128k $dest
-            extension: opus.ogg
+            extension: opus
+
+            # extension opus.ogg
             # Above is to work around android media scanner, opus is included 
             # in the file extension for making it easier on me in the future
             # when android media scanner picks up opus extensions properly
