@@ -2,4 +2,4 @@ bin/bin/gotop
 bin/bin/repo
 deadbeef/.config/deadbeef/dspconfig
 deadbeef/.config/deadbeef/playlists/*
-
+beets/.config/beets/state.pickle
