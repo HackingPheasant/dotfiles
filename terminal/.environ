@@ -1,0 +1,75 @@
+# ~/.environ - sh/bash global environment
+# vim: ft=sh
+
+setpath() {
+	xIFS=$IFS; IFS=":"; var=$1;
+	shift; eval "$var=\$*";
+	IFS=$xIFS; unset var xIFS;
+}
+
+# basic
+
+umask 022
+
+test "$UID"      || UID=$(id -u)
+test "$USER"     || USER=$(id -un)
+test "$HOSTNAME" || HOSTNAME=$(hostname)
+
+set -a
+
+# paths
+
+PREFIX="$HOME/.local"
+
+GOPATH="$PREFIX/go"
+
+setpath PATH \
+        "$HOME/.scripts"			\
+	"$PREFIX/bin"				\
+	"$HOME/bin"				\
+        "$HOME/.bin"				\
+	"$GOPATH/bin"				\
+	"$PATH"					\
+	"/usr/local/sbin" 			\
+	"/usr/sbin"				\
+	"/sbin"					;
+
+DOTNET_ROOT="$prefix/dotnet:$HOME/dotnet"
+
+# http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
+
+test "$XDG_CACHE_HOME"  || XDG_CACHE_HOME="$HOME/.cache"
+test "$XDG_CONFIG_HOME" || XDG_CONFIG_HOME="$HOME/.config"
+test "$XDG_DATA_HOME"   || XDG_DATA_HOME="$HOME/.local/share"
+test "$XDG_RUNTIME_DIR" || XDG_RUNTIME_DIR="$XDG_CACHE_HOME"
+
+# preferred programs
+
+BROWSER="firefox"
+EDITOR="vim"
+PAGER="less"
+unset VISUAL
+
+# libdefaults
+
+
+# appdefaults
+
+# local
+
+if [ -f ~/.environ-$HOSTNAME ]; then
+	. ~/.environ-$HOSTNAME
+fi
+
+# appdefaults - local
+
+if [ "$LOCAL_PERL" = n ]; then
+	PERL_CPANM_OPT="--sudo"
+else
+	PERL_MM_OPT="INSTALL_BASE=$PREFIX"
+	PERL_MB_OPT="--install_base '$PREFIX'"
+fi
+
+# disable allexport
+
+set +a
