@@ -6,7 +6,7 @@
 ## ```mpv/```
 ## ```scripts/```
 ## ```terminal/```
-Below is an excert from https://superuser.com/a/789499 (incase the site or link disapper)
+Below is an excerpt from https://superuser.com/a/789499 (incase the site or link disapper)
 
 Requirements:
 * ```~/.profile``` must be compatible with any /bin/sh – this includes bash, dash, ksh, whatever else a distro might choose to use.

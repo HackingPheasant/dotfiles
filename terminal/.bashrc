@@ -1,10 +1,6 @@
 # ~/.bashrc - bash interactive startup file
 # vim: ft=sh
 
-# Source solus stateless config
-# the stateless concept - a strict separation between User and System files for easier OS manageability.
-source /usr/share/defaults/etc/profile
-
 have() { command -v "$1" >&/dev/null; }
 
 if [[ ! $PREFIX ]]; then

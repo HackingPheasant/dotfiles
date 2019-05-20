@@ -25,6 +25,7 @@ alias py2='python2'
 alias py3='python3'
 rdu() { (( $# )) || set -- */; du -hsc "$@" | awk '$1 !~ /K/ || $2 == "total"' | sort -h; }
 alias sudo='sudo ' # for alias expansion in sudo args https://askubuntu.com/a/22043
+alias fuck='sudo !!'
 alias treedu='tree --du -h'
 alias unpickle='python -m pickletools'
 
