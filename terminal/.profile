@@ -1,13 +1,13 @@
 # ~/.profile - sh/bash login script
 # vim: ft=sh
 
+# Source solus stateless config
+# the stateless concept - a strict separation between User and System files for easier OS manageability.
+source /usr/share/defaults/etc/profile
+
 . ~/.environ
 
 have() { type "$1" >/dev/null 2>&1; }
-
-if  [ -f ~/.profile-$HOSTNAME ]; then
-	. ~/.profile-$HOSTNAME
-fi
 
 if [ "$BASH" ] && [ -f ~/.bashrc ]; then
 	. ~/.bashrc

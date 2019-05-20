@@ -1,6 +1,7 @@
 # ~/.environ - sh/bash global environment
 # vim: ft=sh
 
+# todo - document this bash-fu magic
 setpath() {
 	xIFS=$IFS; IFS=":"; var=$1;
 	shift; eval "$var=\$*";
@@ -24,12 +25,11 @@ PREFIX="$HOME/.local"
 GOPATH="$PREFIX/go"
 
 setpath PATH \
-        "$HOME/.scripts"			\
 	"$PREFIX/bin"				\
-	"$HOME/bin"				\
         "$HOME/.bin"				\
 	"$GOPATH/bin"				\
-	"$PATH"					\
+	"$HOME/.scripts"			\
+        "$PATH"					\
 	"/usr/local/sbin" 			\
 	"/usr/sbin"				\
 	"/sbin"					;
@@ -52,14 +52,9 @@ unset VISUAL
 
 # libdefaults
 
-
 # appdefaults
 
 # local
-
-if [ -f ~/.environ-$HOSTNAME ]; then
-	. ~/.environ-$HOSTNAME
-fi
 
 # appdefaults - local
 

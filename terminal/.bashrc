@@ -1,6 +1,10 @@
 # ~/.bashrc - bash interactive startup file
 # vim: ft=sh
 
+# Source solus stateless config
+# the stateless concept - a strict separation between User and System files for easier OS manageability.
+source /usr/share/defaults/etc/profile
+
 have() { command -v "$1" >&/dev/null; }
 
 if [[ ! $PREFIX ]]; then
@@ -44,9 +48,5 @@ HISTIGNORE='?:??'               # don't save trivial one and two character comma
 HISTTIMEFORMAT="(%F %T) "
 
 . ~/.scripts/aliases.sh
-
-if [[ -f ~/.bashrc-$HOSTNAME ]]; then
-	. ~/.bashrc-$HOSTNAME
-fi
 
 true
