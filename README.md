@@ -13,13 +13,13 @@ Requirements:
 
 * Environment variables must be put in a file that is read by both console logins (i.e. a 'login' shell) and graphical logins (i.e. display managers like GDM, LightDM, or LXDM).
 
-* There is very little point in having both ~/.profile and ~/.bash_profile. If the latter is missing, bash will happily use the former, and any bash-specific lines can be guarded with a check for $BASH or $BASH_VERSION.
+* There is very little point in having both ```~/.profile``` and ```~/.bash_profile```. If the latter is missing, bash will happily use the former, and any bash-specific lines can be guarded with a check for $BASH or $BASH_VERSION.
 
 * The separation between ```*profile``` and ```*rc``` is that the former is used for 'login' shells, and the latter every time you open a terminal window. However, bash in 'login' mode doesn't source ```~/.bashrc```, therefore ```~/.profile``` needs to do it manually.
 
 The simplest configuration would be:
 
-* Have a ```~/.profile``` that sets all environment variables (except bash-specific ones), perhaps prints a line or two, then sources ````~/.bashrc``` if being run by bash, sticking to sh-compatible syntax otherwise.
+* Have a ```~/.profile``` that sets all environment variables (except bash-specific ones), perhaps prints a line or two, then sources ```~/.bashrc``` if being run by bash, sticking to sh-compatible syntax otherwise.
 
 ```sh
 export TZ="Europe/Paris"
@@ -59,15 +59,15 @@ Then, of course, updating ```~/.environ``` to unset BASH_ENV.
 TL;DR:
 Shell stuff gets sourced in this order:
 
-  * `.profile` – *sh* compatible login script, kept minimal
-      * `.environ` – *sh* compatible environment variables & umask
-          * `.environ-$HOSTNAME`
-      * `.bashrc` if running in bash
-	  * `.environ` if it wasn't sourced yet
-          * `.bashrc-$HOSTNAME`
-      * `.profile-$HOSTNAME`
+  * ```.profile``` – *sh* compatible login script, kept minimal
+      * ```.environ``` – *sh* compatible environment variables & umask
+          * ```.environ-$HOSTNAME```
+      * ```.bashrc``` if running in bash
+	  * ```.environ``` if it wasn't sourced yet
+          * ```.bashrc-$HOSTNAME```
+      * ```.profile-$HOSTNAME```
 
-The `.environ` file is intended to be safe to source from anywhere, including .bashrc – that way it also applies to `ssh $host $command` (which only uses .bashrc and not .profile).
+The ```.environ``` file is intended to be safe to source from anywhere, including .bashrc – that way it also applies to ```ssh $host $command``` (which only uses .bashrc and not .profile).
 
 
 ## ``` vim/```
