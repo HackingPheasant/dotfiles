@@ -3,7 +3,10 @@
 
 # Source solus stateless config
 # the stateless concept - a strict separation between User and System files for easier OS manageability.
-source /usr/share/defaults/etc/profile
+
+if [[ $(lsb_release -i) == *Solus* ]]; then
+    source /usr/share/defaults/etc/profile
+fi
 
 . ~/.environ
 

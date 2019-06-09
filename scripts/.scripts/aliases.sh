@@ -14,7 +14,9 @@ alias hd='hexdump -C'
 alias hex='xxd -p'
 alias unhex='xxd -p -r'
 alias init='telinit' # for systemd
-alias ll='ls -l'
+alias ls='ls --color=auto'
+alias ll='ls --color=auto -l'
+alias lla='ls --color=auto -la'
 alias logoff='logout'
 if [[ $DESKTOP_SESSION ]]; then
 	alias logout='env logout'

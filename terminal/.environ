@@ -29,12 +29,13 @@ setpath PATH \
         "$HOME/.bin"				\
 	"$GOPATH/bin"				\
 	"$HOME/.scripts"			\
-        "$PATH"					\
+	"$HOME/dotnet"				\
+	"$PATH"					\
 	"/usr/local/sbin" 			\
 	"/usr/sbin"				\
 	"/sbin"					;
 
-DOTNET_ROOT="$prefix/dotnet:$HOME/dotnet"
+DOTNET_ROOT="$PREFIX/dotnet:$HOME/dotnet"
 
 # http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
 
