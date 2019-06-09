@@ -19,7 +19,8 @@ fi
 # eval
 # "typical" use of eval is for running commands that 
 # generate shell commands to set environment variables.
-eval "$(hub alias -s)"
-
+if [ -x hub ]; then
+	eval "$(hub alias -s)"
+fi
 
 true
