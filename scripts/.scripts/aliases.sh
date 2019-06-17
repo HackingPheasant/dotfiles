@@ -16,6 +16,7 @@ alias unhex='xxd -p -r'
 alias init='telinit' # for systemd
 alias ls='ls --color=auto'
 alias ll='ls --color=auto -l'
+alias la='ls --color=auto -a'
 alias lla='ls --color=auto -la'
 alias logoff='logout'
 if [[ $DESKTOP_SESSION ]]; then
