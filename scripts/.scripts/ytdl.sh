@@ -10,6 +10,14 @@ else
     YTCHANNELS=$(<$1)
 fi
 
+# TODO:
+# - Pass flags so only certain portions of this script can be run
+# - Make it so passing a single url it can download
+# - Make it less youtube specific and more general purpose while also being true to its original purpose
+# - Make the post processing sripts more efficent (Basically only run on whats needed and not everything)
+# Note: I may need to convert this to a python script at some point for these TODO's to become reality
+# and at some point the bash script will become unwieldy
+
 function post-process-playlists {
     # Merge covers into mkv (@ 2 Folders deep)
     for file in */*/*.jpg; do 
