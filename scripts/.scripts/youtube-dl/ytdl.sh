@@ -5,7 +5,7 @@
 trap 'trap - INT; kill -s HUP -- -$$' INT
 
 if [[ -z $1 ]]; then
-    YTCHANNELS=$(<$HOME/.scripts/youtube-channels.txt)
+    YTCHANNELS=$(<$HOME/.scripts/youtube-dl/youtube-channels.txt)
 else
     YTCHANNELS=$(<$1)
 fi
@@ -61,9 +61,10 @@ function post-process-channel {
 for i in $YTCHANNELS; do
     # view=1 to view all playlists otherwise you might not catch all playlists
     # goodgameabctv is a good example of this coming in useful
-    youtube-dl --config-location $HOME/.scripts/youtube-channels-playlists.conf "$i/playlists?view=1" && youtube-dl --config-location $HOME/.scripts/youtube-channels.conf "$i"
+    youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube-channels-playlists.conf "$i/playlists?view=1" && youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube-channels.conf "$i"
     echo "[script] Finished downloading channel $i"
-    post-process-playlists
-    post-process-channel
     wait
 done
+
+post-process-playlists
+post-process-channel

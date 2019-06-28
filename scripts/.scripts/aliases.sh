@@ -33,7 +33,7 @@ alias treedu='tree --du -h'
 alias unpickle='python -m pickletools'
 
 # dates
-
+alias cal='cal -m'
 alias ssdate='date "+%Y%m%d"'
 alias sdate='date "+%Y-%m-%d"'
 alias mmdate='date "+%Y-%m-%d %H:%M"'
@@ -61,6 +61,8 @@ cat() {
 		command cat "$@"
 	fi
 }
+
+ytdl() { $HOME/.scripts/youtube-dl/ytdl.sh "$@"; }
 
 
 # package management
