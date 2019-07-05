@@ -61,7 +61,8 @@ function post-process-channel {
 for i in $YTCHANNELS; do
     # view=1 to view all playlists otherwise you might not catch all playlists
     # goodgameabctv is a good example of this coming in useful
-    youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube-channels-playlists.conf "$i/playlists?view=1" && youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube-channels.conf "$i"
+    youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube-channels-playlists.conf "$i/playlists?view=1"
+    youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube-channels.conf "$i"
     echo "[script] Finished downloading channel $i"
     wait
 done
