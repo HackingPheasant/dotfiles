@@ -25,17 +25,12 @@ PREFIX="$HOME/.local"
 GOPATH="$PREFIX/go"
 
 setpath PATH \
-	"$PREFIX/bin"				\
-        "$HOME/.bin"				\
+        "$PREFIX/bin"				\
 	"$GOPATH/bin"				\
 	"$HOME/.scripts"			\
-	"$HOME/dotnet"				\
-	"$PATH"					\
-	"/usr/local/sbin" 			\
-	"/usr/sbin"				\
-	"/sbin"					;
+	"$PATH"					;
 
-DOTNET_ROOT="$PREFIX/dotnet:$HOME/dotnet"
+DOTNET_ROOT="$PREFIX/lib/dotnet"
 
 # http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
 
