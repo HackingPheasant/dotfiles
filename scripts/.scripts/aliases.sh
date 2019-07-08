@@ -14,6 +14,7 @@ alias gmpv='gnome-mpv'
 alias hd='hexdump -C'
 alias hex='xxd -p'
 alias unhex='xxd -p -r'
+alias httpdump="sudo tcpdump -i wlp5s0 -n -s 0 -w - | grep -a -o -E \"Host\\: .*|GET \\/.*\""
 alias init='telinit' # for systemd
 alias ls='ls --color=auto'
 alias ll='ls --color=auto -l'
@@ -30,11 +31,14 @@ alias py3='python3'
 rdu() { (( $# )) || set -- */; du -hsc "$@" | awk '$1 !~ /K/ || $2 == "total"' | sort -h; }
 alias sudo='sudo ' # for alias expansion in sudo args https://askubuntu.com/a/22043
 alias fuck='sudo !!'
+alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date' # Stopwatch
 alias treedu='tree --du -h'
 alias unpickle='python -m pickletools'
+alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"' # URL-encode strings
 
 # dates
 alias cal='cal -m'
+alias week='date +%V' # Get week number
 alias ssdate='date "+%Y%m%d"'
 alias sdate='date "+%Y-%m-%d"'
 alias mmdate='date "+%Y-%m-%d %H:%M"'
@@ -48,6 +52,12 @@ alias isodate='date "+%Y-%m-%dT%H:%M:%S%z"' # ISO 8601
 
 alias good='git bisect good'
 alias bad='git bisect bad'
+
+# IP addresses
+alias pubip="dig +short myip.opendns.com @resolver1.opendns.com" # Currently down, find alternate option
+alias localip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'"
+alias ips="ifconfig -a | grep -o 'inet6\\? \\(addr:\\)\\?\\s\\?\\(\\(\\([0-9]\\+\\.\\)\\{3\\}[0-9]\\+\\)\\|[a-fA-F0-9:]\\+\\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+
 
 # conditional aliases
 
