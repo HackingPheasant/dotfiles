@@ -1,3 +1,6 @@
+# ~/.gitconfig: git-config(1) - Git configuration
+# vim: ft=gitconfig:nowrap
+
 [user]
 	useconfigonly = true
 
