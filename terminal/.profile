@@ -15,11 +15,4 @@ if [ "$BASH" ] && [ -f ~/.bashrc ]; then
 	. ~/.bashrc
 fi
 
-# eval
-# "typical" use of eval is for running commands that 
-# generate shell commands to set environment variables.
-if [ -x hub ]; then
-	eval "$(hub alias -s)"
-fi
-
 true
