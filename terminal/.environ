@@ -25,10 +25,10 @@ PREFIX="$HOME/.local"
 GOPATH="$PREFIX/go"
 
 setpath PATH \
-        "$PREFIX/bin"				\
+	"$PREFIX/bin"				\
 	"$GOPATH/bin"				\
 	"$HOME/.scripts"			\
-	"$PATH"					;
+	"$PATH"						;
 
 DOTNET_ROOT="$PREFIX/lib/dotnet"
 
