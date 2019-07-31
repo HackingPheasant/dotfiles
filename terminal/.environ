@@ -32,6 +32,10 @@ setpath PATH \
 
 DOTNET_ROOT="$PREFIX/lib/dotnet"
 
+# Cisco Packet Tracer
+PT7HOME=/opt/pt
+QT_DEVICE_PIXEL_RATIO=auto
+
 # http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
 
 test "$XDG_CACHE_HOME"  || XDG_CACHE_HOME="$HOME/.cache"
