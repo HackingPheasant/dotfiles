@@ -80,7 +80,15 @@ endif
 set ttimeout		" time out for key codes
 set ttimeoutlen=100	" wait up to 100ms after Esc for special key
 
+" Force saving files that require root permission 
 cnoremap w!! w !sudo tee > /dev/null %
+
+" Switch tabs with Ctrl left and right
+nnoremap <C-right> :tabnext<CR>
+nnoremap <C-left> :tabprevious<CR>
+" and whilst in insert mode
+inoremap <C-right> <Esc>:tabnext<CR>
+inoremap <C-left> <Esc>:tabprevious<CR>
 
 " Instead of failing a command because of unsaved changes, instead raise a
 " dialogue asking if you wish to save changed files.
