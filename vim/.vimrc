@@ -90,6 +90,9 @@ nnoremap <C-left> :tabprevious<CR>
 inoremap <C-right> <Esc>:tabnext<CR>
 inoremap <C-left> <Esc>:tabprevious<CR>
 
+" Compile program and run it when I press F5
+nnoremap <F5> :w<CR> :silent !clear; make %<<CR> :!echo "--------------- Running ---------------"; echo ; ./%<<CR>
+
 " Instead of failing a command because of unsaved changes, instead raise a
 " dialogue asking if you wish to save changed files.
 set confirm
