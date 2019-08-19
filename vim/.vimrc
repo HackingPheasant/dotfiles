@@ -86,9 +86,6 @@ cnoremap w!! w !sudo tee > /dev/null %
 " Switch tabs with Ctrl left and right
 nnoremap <C-right> :tabnext<CR>
 nnoremap <C-left> :tabprevious<CR>
-" and whilst in insert mode
-inoremap <C-right> <Esc>:tabnext<CR>
-inoremap <C-left> <Esc>:tabprevious<CR>
 
 " Compile program and run it when I press F5
 nnoremap <F5> :w<CR> :silent !clear; make %<<CR> :!echo "--------------- Running ---------------"; echo ; ./%<<CR>
@@ -99,6 +96,9 @@ set confirm
 
 set history=200		" keep 200 lines of command line history
 set wildmenu		" display completion matches in a status line
+set wildignore+=*~,*.o,*.obj,.git,*.rbc,*.class,.svn,vendor/gems/*,*.bak,*.exe,target,tags,.tags,*/.git/*
+set wildignore+=*.pyc,*.DS_Store,*.db
+set wildignore+=versions/*,cache/*
 
 set encoding=utf-8
 set fileencoding=utf-8
