@@ -34,7 +34,6 @@ DOTNET_ROOT="$PREFIX/lib/dotnet"
 
 # Cisco Packet Tracer
 PT7HOME=/opt/pt
-QT_DEVICE_PIXEL_RATIO=auto
 
 # http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
 
@@ -59,6 +58,9 @@ unset VISUAL
 # libdefaults
 
 # appdefaults
+
+QT_DEVICE_PIXEL_RATIO=auto
+BUKUSERVER_PER_PAGE=100
 
 # local
 
