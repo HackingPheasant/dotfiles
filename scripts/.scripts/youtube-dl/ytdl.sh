@@ -4,10 +4,13 @@
 # ctrl+c will stop script
 trap 'trap - INT; kill -s HUP -- -$$' INT
 
+# Enable globstar
+shopt -s globstar
+
 if [[ -z $1 ]]; then
-    YTCHANNELS=$(<$HOME/.scripts/youtube-dl/youtube-channels.txt)
+    LINKS=$(<$HOME/.scripts/youtube-dl/youtube-channels.txt)
 else
-    YTCHANNELS=$(<$1)
+    LINKS=$(<$1)
 fi
 
 # TODO:
@@ -18,54 +21,41 @@ fi
 # Note: I may need to convert this to a python script at some point for these TODO's to become reality
 # and at some point the bash script will become unwieldy
 
-function post-process-playlists {
-    # Merge covers into mkv (@ 2 Folders deep)
-    for file in */*/*.jpg; do 
-        title="${file%.*}"
-        echo "[ffmpeg] Embedding cover into $title.mkv"
-        ffmpeg -loglevel warning  -i "$title.mkv" -c copy -attach "$title.jpg" -metadata:s:t filename=cover_land.jpg -metadata:s:t mimetype=image/jpeg -metadata:s:t title=Thumbnail "$title.temp.mkv"
-        rm "$title.mkv" "$title.jpg"
-        mv "$title.temp.mkv" "$title.mkv"
-        wait
-    done
-    
-    # Replace Audio and Video placeholders with Format (@ 2 Folder Deep)
-    for file in */*/*.mkv; do
-        audio="$(mediainfo "--Output=Audio;%Format%" "$file")"
-	video="$(mediainfo "--Output=Video;%Format%" "$file")"
-        mv "$file" "${file//Video Audio/$video $audio}"
-        wait
-    done
+function merge-covers {
+    # Merge covers into mkv
+    title="${file%.*}"
+    echo "[ffmpeg] Embedding cover into $title.mkv"
+    ffmpeg -loglevel warning  -i "$title.mkv" -c copy -attach "$title.jpg" -metadata:s:t filename=cover_land.jpg -metadata:s:t mimetype=image/jpeg -metadata:s:t title=Thumbnail "$title.temp.mkv"
+    rm "$title.mkv" "$title.jpg"
+    mv "$title.temp.mkv" "$title.mkv"
+    wait
 }
 
-function post-process-channel {
-    # Merge covers into mkv (@ 1 Folders deep)
-    for file in */*.jpg; do 
-        title="${file%.*}"
-        echo "[ffmpeg] Embedding cover into $title.mkv"
-        ffmpeg -loglevel warning -i "$title.mkv" -c copy -attach "$title.jpg" -metadata:s:t filename=cover_land.jpg -metadata:s:t mimetype=image/jpeg -metadata:s:t title=Thumbnail "$title.temp.mkv"
-        rm "$title.mkv" "$title.jpg"
-        mv "$title.temp.mkv" "$title.mkv"
-        wait
-    done
-
-    # Replace Audio and Video placeholders with Format (@ 1 Folder Deep)
-    for file in */*.mkv; do
-        audio="$(mediainfo "--Output=Audio;%Format%" "$file")"
-        video="$(mediainfo "--Output=Video;%Format%" "$file")"
-        mv "$file" "${file//Video Audio/$video $audio}"
-        wait
-    done
+function replace-placeholder-text {
+    # Replace Audio and Video placeholders with Format
+    audio="$(mediainfo "--Output=Audio;%Format%" "$file")"
+    video="$(mediainfo "--Output=Video;%Format%" "$file")"
+    mv "$file" "${file//Video Audio/$video $audio}"
+    wait
 }
 
-for i in $YTCHANNELS; do
+for i in $LINKS; do
     # view=1 to view all playlists otherwise you might not catch all playlists
     # goodgameabctv is a good example of this coming in useful
-    youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube-channels-playlists.conf "$i/playlists?view=1"
-    youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube-channels.conf "$i"
+    # FYI, I am keeping the generic config options  in the config file 
+    # and then passing the unique options on the commandline
+    youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube.conf --output '%(uploader)s/%(playlist)s/%(title)s [ID %(id)s] [WEB-DL-%(height)sp Video Audio].%(ext)s' --playlist-reverse --match-filter "playlist_title != 'Trending'" --match-filter "playlist_title != 'Liked videos'" --match-filter "playlist_title != 'Favorites'" "$i/playlists?view=1"
+    youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube.conf "$i"
     echo "[script] Finished downloading channel $i"
     wait
 done
 
-post-process-playlists
-post-process-channel
+for file in **/*.jpg; do
+    if [[ -e "$file" ]]; then
+        merge-covers
+    fi
+done
+
+for file in **/*.mkv; do
+    replace-placeholder-text
+done
