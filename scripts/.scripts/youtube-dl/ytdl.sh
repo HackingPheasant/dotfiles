@@ -21,13 +21,23 @@ fi
 # Note: I may need to convert this to a python script at some point for these TODO's to become reality
 # and at some point the bash script will become unwieldy
 
+function convert-to-mkv {
+    title="${file%.*}"
+    echo "[mkvmerge] Muxing $title to mkv"
+    mkvmerge -o "$title.mkv" "$title.mp4"
+    rm "$title.mp4"
+    wait
+}
+
 function merge-covers {
     # Merge covers into mkv
     title="${file%.*}"
-    echo "[ffmpeg] Embedding cover into $title.mkv"
-    ffmpeg -loglevel warning  -i "$title.mkv" -c copy -attach "$title.jpg" -metadata:s:t filename=cover_land.jpg -metadata:s:t mimetype=image/jpeg -metadata:s:t title=Thumbnail "$title.temp.mkv"
-    rm "$title.mkv" "$title.jpg"
-    mv "$title.temp.mkv" "$title.mkv"
+    if [[ -e "$title.mkv" ]]; then
+        echo "[ffmpeg] Embedding cover into $title.mkv"
+        ffmpeg -loglevel warning  -i "$title.mkv" -c copy -attach "$title.jpg" -metadata:s:t filename=cover_land.jpg -metadata:s:t mimetype=image/jpeg -metadata:s:t title=Thumbnail "$title.temp.mkv"
+        rm "$title.mkv" "$title.jpg"
+        mv "$title.temp.mkv" "$title.mkv"
+    fi
     wait
 }
 
@@ -50,12 +60,17 @@ for i in $LINKS; do
     wait
 done
 
+for file in **/*.mp4; do
+    convert-to-mkv
+    wait
+done
+
 for file in **/*.jpg; do
-    if [[ -e "$file" ]]; then
-        merge-covers
-    fi
+    merge-covers
+    wait
 done
 
 for file in **/*.mkv; do
     replace-placeholder-text
+    wait
 done
