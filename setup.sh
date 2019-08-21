@@ -9,7 +9,8 @@ sudo eopkg update
 sudo eopkg install -c system.devel
 
 # Install some programs I find useful
-sudo eopkg install git stow rclone mpv vim vlc beets discord riot ncdu p7zip gtkhash gtkhash-nautilus-extension
+sudo eopkg rm gnome-mpv thunderbird transmission rhythmbox
+sudo eopkg install git stow rclone mpv vim vlc beets discord riot ncdu p7zip deluge mkvtoolnix mediainfo gtkhash gtkhash-nautilus-extension
 sudo pip3 install internetarchive pylast
 # Dependicies for buku and bukuserver
 # Probley best to do this inside a virtual env but eh...
