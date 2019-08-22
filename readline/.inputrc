@@ -3,6 +3,11 @@
 # For more information on how this file works, please see the
 # INITIALIZATION FILE section of the readline(3) man page
 #
+# You can re-read the inputrc file with C-x C-r.
+
+# First, include any system-wide bindings and variable
+# assignments from /etc/inputrc
+$include /etc/inputrc
 
 # do not bell on tab-completion
 set bell-style none
