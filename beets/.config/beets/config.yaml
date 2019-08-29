@@ -4,8 +4,8 @@
 #############################################################################
 
 ### Global Options
-library: /mnt/3TB-Drive-01/Audio/.musiclibrary.db
-directory: /mnt/3TB-Drive-01/Audio/
+library: ~/Audio/.musiclibrary.db
+directory: ~/Audio/
 plugins:
     # Autotagger Extensions
     - fromfilename
@@ -15,6 +15,7 @@ plugins:
     - embedart
     - ftintitle
     - lastgenre
+    - mbsync
     # Path Format Plugins
     - inline
     # Interoperability
@@ -31,7 +32,9 @@ plugins:
     - web
     # Other/External Plugins
     # - copyartifacts
-    #- check
+    # - check
+
+threaded: yes
 
 per_disc_numbering: true
 
@@ -46,25 +49,37 @@ import:
     resume: ask
     incremental: yes
     quiet_fallback: skip
-    log: /mnt/3TB-Drive-01/Audio/.beet.log
+    log: ~/Audio/.beet.log
     bell: yes
+    languages: en jp de 
+
+aunique:
+    disambuguators: media mastering label catalognum albumdisambig releasegroupdisambig
+
+match:
+    preferred:
+        media: ['Vinyl', 'CD', 'Digital Media|File']
 
 # Done in order listed. Default is special and will always go at the end.
 # e.g. If I had an album with the albumtype $soundtrack and $compilation
 # Then the path that matchs first takes precedence.
 paths:
-    default: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} %if{$bootleg,[Bootleg]}/%if{$multidisc,Disc $disc/}$track. $title
-    vinyl:1: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} [Vinyl] %if{$bootleg,[Bootleg]}/%if{$multidisc,Disc $disc/}$track_alt. $title
-    cassette:1: Music/$albumartist/($year) $album%aunique{,media mastering label catalognum albumdisambig}%if{$ep,%upper{ [$albumtype]}}%if{$single,%title{ [$albumtype]}}%if{$live,%title{ [$albumtype]}} [Cassette] %if{$bootleg,[Bootleg]}/%if{$multidisc,Disc $disc/}$track_alt. $title
-    albumtype:soundtrack: Original Sound Tracks (OST)/$album%aunique{,media mastering label catalognum albumdisambig} ($year)/%if{$multidisc,Disc $disc/}$track. %if{$multiartist,$artist -} $title
-    christmas:1: Christmas Music Collection/$artist - $title
+    default: Music/$albumartist/($year) $album%aunique{} $ep$single$live$bootleg/%if{$multidisc,Disc $disc/}$track. $title
     singleton: Music/Non-Album/$artist/$title
-    comp: Compilations/$album%aunique{,media mastering label catalognum albumdisambig} ($year) %if{$bootleg,[Bootleg]}/%if{$multidisc,Disc $disc/}$track. $artist - $title
-    albumtype:other: Other/$albumartist/$album%aunique{,media mastering label catalognum albumdisambig} %if{$ep,%upper{[$albumtype]}}%if{$single,%title{[$albumtype]}}%if{$live,%title{[$albumtype]}} %if{$bootleg,[Bootleg]} ($year)/%if{$multidisc,Disc $disc/}$track. $title
+    vinylorcassette:1: Music/$albumartist/($year) $album%aunique{} $ep$single$live$vinyl$cassette$bootleg/%if{$multidisc,Disc $disc/}$track_alt. $title
+    albumtype:soundtrack: Original Sound Tracks (OST)/$album%aunique{} ($year)/%if{$multidisc,Disc $disc/}$track. $artist - $title
+    comp: Compilations/$album%aunique{} ($year) $ep$single$live$bootleg/%if{$multidisc,Disc $disc/}$track. $artist - $title
+    albumtype:other: Other/$albumartist/$album%aunique{} $ep$single$live$bootleg ($year)/%if{$multidisc,Disc $disc/}$track. $title
     albumtype:audiobook: Audiobooks/$artist/$album%aunique{}/%if{$multidisc,Disc $disc/}$track. $title
-
+    # Add christmas=1 while importing to add to Christmas Music Collection
+    christmas:1: Christmas Music Collection/$artist - $title
 
 # Plugin Configurations
+
+# Beets will remove empty directory after import if these are the only things left in it
+# Currently isn't used in here by default because we copy instead of move files
+clutter: ["Thumbs.DB", ".DS_Store", "*.m3u", "*.m3u8", "*.sfv"]
+    
 fetchart:
     store_source: yes
 
@@ -76,13 +91,13 @@ convert:
 # auto: yes
     copy_album_art: yes
     album_art_maxwidth: 600
-    dest: /mnt/3TB-Drive-01/Audio/Music [Mobile version]/
+    dest: ~/Audio/Music [Mobile version]/
     embed: yes
     never_convert_lossy_files: yes
     format: mp3
     formats:
         mp3:
-            command: ~/bin/flac-to-mp3.sh $source $dest
+            command: ~/.scripts/flac-to-mp3.sh $source $dest
             extension: mp3
         opus:
             command: ffmpeg -i $source -y -vn -acodec libopus -ab 128k $dest
@@ -102,13 +117,13 @@ lastgenre:
 
 item_fields:
     multidisc: 1 if disctotal > 1 else 0
-    vinyl: 1 if media in ['12" Vinyl', '7" Vinyl', 'Vinyl'] else 0
-    cassette: 1 if media in ['Cassette'] else 0
-    bootleg: 1 if albumstatus in ['Bootleg'] else 0
-# multiartist: 1 if albumartist =='Various Artists' else 0
-    ep: 1 if albumtype == 'ep' else 0
-    single: 1 if albumtype == 'single' else 0
-    live: 1 if albumtype == 'live' else 0
+    vinylorcassette: 1 if media in ['12" Vinyl', '7" Vinyl', 'Vinyl', 'Cassette'] else 0
+    vinyl: u'[Vinyl]' if media in ['12" Vinyl', '7" Vinyl', 'Vinyl'] else ''
+    cassette: u'[Cassette]' if media in ['Cassette'] else ''
+    bootleg: u'[Bootleg]' if albumstatus in ['Bootleg'] else ''
+    ep: u'[EP]' if albumtype == 'ep' else ''
+    single: u'[Single]' if albumtype == 'single' else ''
+    live: u'[Live]' if albumtype == 'live' else ''
 
 play:
     command: /usr/bin/deadbeef
