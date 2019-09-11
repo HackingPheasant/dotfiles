@@ -45,8 +45,8 @@ test "$XDG_RUNTIME_DIR" || XDG_RUNTIME_DIR="$XDG_CACHE_HOME"
 
 # identity, locale
 # Prefer AU English and use UTF-8
-export LANG="en_US.UTF-8";
-export LC_ALL="en_US.UTF-8";
+LANG="en_US.UTF-8";
+LC_ALL="en_US.UTF-8";
 
 # preferred programs
 
@@ -58,7 +58,7 @@ unset VISUAL
 # libdefaults
 
 # appdefaults
-
+MPD_HOST=~/.mpd/socket
 QT_DEVICE_PIXEL_RATIO=auto
 BUKUSERVER_PER_PAGE=100
 
