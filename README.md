@@ -17,7 +17,7 @@ Features:
 * [xdg](https://www.freedesktop.org/wiki/Software/xdg-utils/) configuration for mimetypes and user directories
 * Scripts - Bunch of scripts for various uses. So are my own, others are sourced from aroud the internet
 * External Device Configuratiosn -  These are configurations for devices where sing GNU Stow isn't a viable option but version control of the configurations would still be useful
-	* Switch - Configration Files for Atmosphere CFW, Hekate Bootloader, and other misc homebrew.
+  * Switch - Configration Files for Atmosphere CFW, Hekate Bootloader, and other misc homebrew.
 
 ## Installation
 GNU stow is very easy to use. For each directory in this repo, you simply call:
@@ -41,9 +41,9 @@ TL;DR:
 Shell stuff gets sourced in this order:
 
   * `.profile` – *sh* compatible login script, kept minimal
-      * `.environ` – *sh* compatible environment variables & umask
-      * `.bashrc` if running in bash
-	  * `.environ` if it wasn't sourced yet
+    * `.environ` – *sh* compatible environment variables & umask
+    * `.bashrc` if running in bash
+      * `.environ` if it wasn't sourced yet
 
 The `.environ` file is intended to be safe to source from anywhere, including .bashrc – that way it also applies to `ssh $host $command` (which only uses .bashrc and not .profile).
 
@@ -59,6 +59,6 @@ All my terminal configuaritions are heavily based on [this superuser answer](htt
 * Video Player: [mpv](https://bitwarden.com/)
 * Audio Player: [mpd](https://www.musicpd.org/) with [ncmpcpp](https://rybczak.net/ncmpcpp/) as the frontend.
 * Fonts:
-        * Terminal: [Hack](https://github.com/source-foundry/Hack)
-        * Window Titles: [Clear Sans](https://01.org/clear-sans) Bold
-        * Documents and Interfaces: [Noto Sans](https://www.google.com/get/noto/) Regular
+  * Terminal: [Hack](https://github.com/source-foundry/Hack)
+  * Window Titles: [Clear Sans](https://01.org/clear-sans) Bold
+  * Documents and Interfaces: [Noto Sans](https://www.google.com/get/noto/) Regular
