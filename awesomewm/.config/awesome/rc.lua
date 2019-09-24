@@ -548,4 +548,4 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Runs your autostart.sh script, which should include all the commands you
 -- would like to run every time AwesomeWM restarts
 -- ===================================================================
-awful.spawn.with_shell( os.getenv("HOME") .. "/.config/awesome/autostart.sh")
+awful.spawn.with_shell( os.getenv("HOME") .. "/.config/awesome/autorun.sh")
