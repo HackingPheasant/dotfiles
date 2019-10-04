@@ -28,12 +28,13 @@ setpath PATH \
 	"$PREFIX/bin"				\
 	"$GOPATH/bin"				\
 	"$HOME/.scripts"			\
-	"$PATH"						;
+        "$PREFIX/gems/bin"                      \
+	"$PATH"					;
 
+GOPATH="$PREFIX/go"
 DOTNET_ROOT="$PREFIX/lib/dotnet"
-
-# Cisco Packet Tracer
-PT7HOME=/opt/pt
+GEM_HOME="$PREFIX/lib/gems"
+PT7HOME="/opt/pt" # Cisco Packet Tracer
 
 # http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
 
@@ -44,7 +45,7 @@ test "$XDG_RUNTIME_DIR" || XDG_RUNTIME_DIR="$XDG_CACHE_HOME"
 
 
 # identity, locale
-# Prefer AU English and use UTF-8
+# Prefer English and use UTF-8
 LANG="en_US.UTF-8";
 LC_ALL="en_US.UTF-8";
 
