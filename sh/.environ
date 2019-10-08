@@ -22,16 +22,12 @@ set -a
 
 PREFIX="$HOME/.local"
 
-GOPATH="$PREFIX/go"
-
 setpath PATH \
 	"$PREFIX/bin"				\
-	"$GOPATH/bin"				\
 	"$HOME/.scripts"			\
         "$PREFIX/gems/bin"                      \
 	"$PATH"					;
 
-GOPATH="$PREFIX/go"
 DOTNET_ROOT="$PREFIX/lib/dotnet"
 GEM_HOME="$PREFIX/lib/gems"
 PT7HOME="/opt/pt" # Cisco Packet Tracer
@@ -66,13 +62,6 @@ BUKUSERVER_PER_PAGE=100
 # local
 
 # appdefaults - local
-
-if [ "$LOCAL_PERL" = n ]; then
-	PERL_CPANM_OPT="--sudo"
-else
-	PERL_MM_OPT="INSTALL_BASE=$PREFIX"
-	PERL_MB_OPT="--install_base '$PREFIX'"
-fi
 
 # disable allexport
 
