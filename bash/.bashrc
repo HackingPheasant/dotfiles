@@ -1,6 +1,12 @@
 # ~/.bashrc - bash interactive startup file
 # vim: ft=sh
 
+if [[ $(lsb_release -i) == *Solus* ]]; then
+        # Source solus stateless config
+        # the stateless concept - a strict separation between User and System files for easier OS manageability.
+        source /usr/share/defaults/etc/profile
+fi
+
 have() { command -v "$1" >&/dev/null; }
 
 if [[ ! $PREFIX ]]; then
