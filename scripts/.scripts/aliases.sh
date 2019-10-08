@@ -2,7 +2,8 @@
 
 unalias -a
 
-# Use system defaults, they are more likely to already be installed
+# Use the enviroment variables, otherwise use the system
+# defaults, they are more likely to already be installed
 editor() { command ${EDITOR:-vi} "$@"; }
 browser() { command ${BROWSER:-lynx} "$@"; }
 browsergui() { command ${BROWSER:-firefox} "$@"; }
@@ -54,7 +55,7 @@ alias good='git bisect good'
 alias bad='git bisect bad'
 
 # IP addresses
-alias pubip="dig +short myip.opendns.com @resolver1.opendns.com" # Currently down, find alternate option
+alias pubip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias localip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'"
 alias ips="ifconfig -a | grep -o 'inet6\\? \\(addr:\\)\\?\\s\\?\\(\\(\\([0-9]\\+\\.\\)\\{3\\}[0-9]\\+\\)\\|[a-fA-F0-9:]\\+\\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 
