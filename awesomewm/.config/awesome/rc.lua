@@ -32,15 +32,15 @@ end)
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-local theme_collection = {
+local themes = {
     "geometric",        -- 1 --
 }
 
 -- Change this number to use a different theme
---local theme_name = theme_collection[1]
---local theme_dir = os.getenv("HOME") .. "/.config/awesome/themes/"
+local chosen_theme = themes[1]
+local theme_dir = os.getenv("HOME") .. "/.config/awesome/themes/"
 
---beautiful.init( theme_dir .. theme_name .. "/theme.lua" )
+-- beautiful.init( theme_dir .. chosen_theme .. "/theme.lua" )
 beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 -- This is used later as the default terminal and editor to run.
 terminal = "kitty"
@@ -467,6 +467,7 @@ awful.rules.rules = {
         -- and the name shown there might not match defined rules here.
         name = {
           "Event Tester",  -- xev.
+          "Authentication Required", -- budgie-polkit-dialog
         },
         role = {
           "AlarmWindow",  -- Thunderbird's calendar.

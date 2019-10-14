@@ -16,3 +16,4 @@ function run {
 
 # I need muh transparent terminal
 run compton
+run budgie-polkit-dialog
