@@ -20,6 +20,17 @@ Features:
   * Switch - Configration Files for Atmosphere CFW, Hekate Bootloader, and other misc homebrew.
 
 ## Installation
+First, clone this respositry. For example:
+```sh
+cd ~
+git clone --recursive https://github.com/HackingPheasant/dotfiles.git .dotfiles
+```
+If you cloned from an earlier point in histroy before any submodules are added, or maybe something bugged out and the submodules aren't downloaded, you can fix this by running:
+
+```sh
+git submodule update --init --recursive
+```
+
 GNU stow is very easy to use. For each directory in this repo, you simply call:
 ```sh
 stow <directory>

@@ -34,6 +34,7 @@ alias sudo='sudo ' # for alias expansion in sudo args https://askubuntu.com/a/22
 alias fuck='sudo !!'
 alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date' # Stopwatch
 alias treedu='tree --du -h'
+unfuckawesome() { echo 'awesome.restart()' | awesome-client; }
 alias unpickle='python -m pickletools'
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"' # URL-encode strings
 
@@ -75,7 +76,7 @@ cat() {
 }
 
 ytdl() { $HOME/.scripts/youtube-dl/ytdl.sh "$@"; }
-
+bwfzf() { $HOME/.scripts/bwfzf/bwfzf; }
 
 # package management
 

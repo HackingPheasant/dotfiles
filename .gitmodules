@@ -1,0 +1,4 @@
+[submodule "scripts/.scripts/bwfzf"]
+	path = scripts/.scripts/bwfzf
+	url = https://github.com/HackingPheasant/bwfzf.git
+	branch = master
