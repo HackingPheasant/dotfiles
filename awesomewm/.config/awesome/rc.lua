@@ -31,6 +31,12 @@ end)
 -- }}}
 
 -- {{{ Variable definitions
+terminal = os.getenv("TERMINAL") or "kitty"
+browser = os.getenv("BROWSER") or "firefox"
+editor = os.getenv("EDITOR") or "vim"
+filemanager = "nautilus"
+editor_cmd = terminal .. " -e " .. editor
+
 -- Themes define colours, icons, font and wallpapers.
 local themes = {
     "geometric",        -- 1 --
@@ -39,13 +45,7 @@ local themes = {
 -- Change this number to use a different theme
 local chosen_theme = themes[1]
 local theme_dir = os.getenv("HOME") .. "/.config/awesome/themes/"
-
--- beautiful.init( theme_dir .. chosen_theme .. "/theme.lua" )
-beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
--- This is used later as the default terminal and editor to run.
-terminal = "kitty"
-editor = os.getenv("EDITOR") or "vim"
-editor_cmd = terminal .. " -e " .. editor
+beautiful.init( theme_dir .. chosen_theme .. "/theme.lua" )
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -53,6 +53,7 @@ editor_cmd = terminal .. " -e " .. editor
 -- I suggest you to remap Mod4 to another key using xmodmap or other tools.
 -- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
+altkey = "Mod1"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
@@ -77,14 +78,40 @@ awful.layout.layouts = {
 
 -- {{{ Menu
 -- Create a launcher widget and a main menu
+local SYSTEMCTL="systemctl -q --no-block"
+
+session = {
+    -- lock        = SYSTEMCTL .. " --user start lock.target",
+    sleep       = SYSTEMCTL .. " suspend",
+    logout      = SYSTEMCTL .. " --user exit",
+    restart     = SYSTEMCTL .. " reboot",
+    shutdown    = SYSTEMCTL .. " poweroff"
+}
+
+mysessionmenu = {}
+for k, v in pairs(session) do
+    table.insert(mysessionmenu, {k, v})
+end
+
+mysystemmenu = {
+    { "General Overview", terminal .. " -e gotop" },
+    { "Detailed Overview", terminal .. " -e htop" },
+    { "Volume", terminal .. " -e alsamixer" }, 
+    { "Printers", "xdg-open http://localhost:631"}, 
+}
+
 myawesomemenu = {
    { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
+   { "edit config", editor_cmd .. " " .. awesome.conffile },
    { "restart", awesome.restart },
    { "quit", function() awesome.quit() end },
 }
 
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "open terminal", terminal }
+mymainmenu = awful.menu({ items = { { "Firefox", browser },
+                                    { "Open Terminal", terminal },
+                                    { "System", mysystemmenu },
+                                    { "Session", mysessionmenu },
+                                    {"Awesome Settings", myawesomemenu, beautiful.awesome_icon }
                                   }
                         })
 
@@ -225,20 +252,20 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
-    awful.key({ modkey,           }, "j",
-        function ()
-            awful.client.focus.byidx( 1)
-        end,
-        {description = "focus next by index", group = "client"}
-    ),
-    awful.key({ modkey,           }, "k",
-        function ()
-            awful.client.focus.byidx(-1)
-        end,
-        {description = "focus previous by index", group = "client"}
-    ),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
+    awful.key({ modkey,           }, "j", function () awful.client.focus.byidx( 1)   end,
+              {description = "focus next by index", group = "client"}),
+    awful.key({ modkey,           }, "k", function () awful.client.focus.byidx(-1)   end,
+              {description = "focus previous by index", group = "client"}),
+    awful.key({ modkey,           }, "w", function () mymainmenu:show()              end,
               {description = "show main menu", group = "awesome"}),
+    
+    -- screenshots
+    -- awful.key({                   }, "Print", function () awful.util.spawn("scrot 'Screenshot from %Y-%m-%d %H:%M:%S.png' -e 'mv "$f" $$(xdg-user-dir PICTURES)/Screenshots/'") end,
+    --    {description = "Screenshot", group = "screenshots"}),
+    -- awful.key({ modkey,           }, "Print", function () awful.util.spawn("scrot --select 'Screenshot from %Y-%m-%d %H:%M:%S.png' -e 'mv "$f" $$(xdg-user-dir PICTURES)/Screenshots/'") end,
+    --    {description = "Screenshot with mouse select", group = "screenshots"}),
+    -- awful.key({altkey,            }, "Print", function () awful.util.spawn("scrot --focused 'Screenshot from %Y-%m-%d %H:%M:%S.png' -e 'mv "$f" $$(xdg-user-dir PICTURES)/Screenshots/'") end,
+    --    {description = "Screenshot current window", group = "screenshots"}),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
@@ -263,6 +290,8 @@ globalkeys = gears.table.join(
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
+    awful.key({ modkey,           }, "e", function () awful.spawn(filemanager) end,
+              {description = "open a filemanager", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit,
@@ -323,7 +352,7 @@ clientkeys = gears.table.join(
             c:raise()
         end,
         {description = "toggle fullscreen", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end,
+    awful.key({ altkey,           }, "F4",      function (c) c:kill()                        end,
               {description = "close", group = "client"}),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
               {description = "toggle floating", group = "client"}),
@@ -450,6 +479,7 @@ awful.rules.rules = {
           "DTA",  -- Firefox addon DownThemAll.
           "copyq",  -- Includes session name in class.
           "pinentry",
+          "nautilus", -- gnome filemanager
         },
         class = {
           "Arandr",
@@ -480,6 +510,15 @@ awful.rules.rules = {
     { rule_any = {type = { "normal", "dialog" }
       }, properties = { titlebars_enabled = true }
     },
+
+    -- No  titlebars on select clients and dialogs
+    { rule_any = {
+        instance = {
+            "nautilus", -- gnome filemanager
+        },
+        name = { 
+            "Authentication Required", -- budgie-polkit-dialog
+        }}, properties = { titlebars_enabled = false }},
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },

@@ -17,3 +17,5 @@ function run {
 # I need muh transparent terminal
 run compton
 run budgie-polkit-dialog
+run solus-update-checker
+run nm-applet
