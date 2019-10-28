@@ -1,3 +1,11 @@
+--------------------------------------------------------------------------------
+--                              Main Config                                   --
+--------------------------------------------------------------------------------
+
+
+-- Load modules
+--------------------------------------------------------------------------------
+
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
@@ -18,7 +26,9 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
--- {{{ Error handling
+-- Error handling
+--------------------------------------------------------------------------------
+
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
 naughty.connect_signal("request::display_error", function(message, startup)
@@ -28,10 +38,10 @@ naughty.connect_signal("request::display_error", function(message, startup)
         message = message
     }
 end)
--- }}}
 
--- {{{ Variable definitions
-terminal = os.getenv("TERMINAL") or "kitty"
+-- Enviroment/Variable definitions and Theme Setup
+--------------------------------------------------------------------------------
+terminal = os.getenv("TERMINAL") or "kitty" or "x-terminal-emulator"
 browser = os.getenv("BROWSER") or "firefox"
 editor = os.getenv("EDITOR") or "vim"
 filemanager = "nautilus"
@@ -74,10 +84,17 @@ awful.layout.layouts = {
     -- awful.layout.suit.corner.sw,
     -- awful.layout.suit.corner.se,
 }
--- }}}
 
--- {{{ Menu
+
+
+
+
+
+-- Main menu configuration
+--------------------------------------------------------------------------------
+
 -- Create a launcher widget and a main menu
+
 local SYSTEMCTL="systemctl -q --no-block"
 
 session = {
@@ -87,6 +104,8 @@ session = {
     restart     = SYSTEMCTL .. " reboot",
     shutdown    = SYSTEMCTL .. " poweroff"
 }
+
+-- Create sub menus
 
 mysessionmenu = {}
 for k, v in pairs(session) do
@@ -107,25 +126,27 @@ myawesomemenu = {
    { "quit", function() awesome.quit() end },
 }
 
+-- Create main menu
+
 mymainmenu = awful.menu({ items = { { "Firefox", browser },
                                     { "Open Terminal", terminal },
                                     { "System", mysystemmenu },
                                     { "Session", mysessionmenu },
-                                    {"Awesome Settings", myawesomemenu, beautiful.awesome_icon }
+                                    { "Awesome Settings", myawesomemenu, beautiful.awesome_icon }
                                   }
                         })
-
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = mymainmenu })
 
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
--- }}}
 
 -- Keyboard map indicator and switcher
 mykeyboardlayout = awful.widget.keyboardlayout()
 
--- {{{ Wibar
+-- Wibar
+--------------------------------------------------------------------------------
+
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
 
@@ -231,17 +252,18 @@ screen.connect_signal("request::desktop_decoration", function(s)
         },
     }
 end)
--- }}}
 
--- {{{ Mouse bindings
+-- Key and Mouse bindings
+--------------------------------------------------------------------------------
+
+--  Mouse bindings
 root.buttons(gears.table.join(
     awful.button({ }, 3, function () mymainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
--- }}}
 
--- {{{ Key bindings
+-- Key bindings
 globalkeys = gears.table.join(
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
@@ -257,15 +279,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "k", function () awful.client.focus.byidx(-1)   end,
               {description = "focus previous by index", group = "client"}),
     awful.key({ modkey,           }, "w", function () mymainmenu:show()              end,
-              {description = "show main menu", group = "awesome"}),
-    
-    -- screenshots
-    -- awful.key({                   }, "Print", function () awful.util.spawn("scrot 'Screenshot from %Y-%m-%d %H:%M:%S.png' -e 'mv "$f" $$(xdg-user-dir PICTURES)/Screenshots/'") end,
-    --    {description = "Screenshot", group = "screenshots"}),
-    -- awful.key({ modkey,           }, "Print", function () awful.util.spawn("scrot --select 'Screenshot from %Y-%m-%d %H:%M:%S.png' -e 'mv "$f" $$(xdg-user-dir PICTURES)/Screenshots/'") end,
-    --    {description = "Screenshot with mouse select", group = "screenshots"}),
-    -- awful.key({altkey,            }, "Print", function () awful.util.spawn("scrot --focused 'Screenshot from %Y-%m-%d %H:%M:%S.png' -e 'mv "$f" $$(xdg-user-dir PICTURES)/Screenshots/'") end,
-    --    {description = "Screenshot current window", group = "screenshots"}),
+              {description = "show main menu", group = "awesome"}), 
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
@@ -343,6 +357,27 @@ globalkeys = gears.table.join(
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"})
+
+    -- screenshots
+    -- awful.key({                   }, "Print", function () awful.util.spawn("scrot 'Screenshot from %Y-%m-%d %H:%M:%S.png' -e 'mv "$f" $$(xdg-user-dir PICTURES)/Screenshots/'") end,
+    --    {description = "Screenshot", group = "screenshots"}),
+    -- awful.key({ modkey,           }, "Print", function () awful.util.spawn("scrot --select 'Screenshot from %Y-%m-%d %H:%M:%S.png' -e 'mv "$f" $$(xdg-user-dir PICTURES)/Screenshots/'") end,
+    --    {description = "Screenshot with mouse select", group = "screenshots"}),
+    -- awful.key({altkey,            }, "Print", function () awful.util.spawn("scrot --focused 'Screenshot from %Y-%m-%d %H:%M:%S.png' -e 'mv "$f" $$(xdg-user-dir PICTURES)/Screenshots/'") end,
+    --    {description = "Screenshot current window", group = "screenshots"}),
+    
+    -- sound
+    -- TODO (Keys to Implement)
+    --awful.key({                   }, "Print", function () awful.util.spawn("amixer -D sset Master ") end,
+    --          {description = "Screenshot", group = "screenshots"}),
+    -- XF86AudioRaiseVolume
+    -- XF86AudioLowerVolume
+    -- XF86AudioMute
+    
+    -- brightness
+    -- TODO (Keys to Implement)
+    -- XF86MonBrightnessUp
+    -- XF86MonBrightnessDown
 )
 
 clientkeys = gears.table.join(
@@ -455,9 +490,10 @@ clientbuttons = gears.table.join(
 
 -- Set keys
 root.keys(globalkeys)
--- }}}
 
--- {{{ Rules
+-- Rules
+--------------------------------------------------------------------------------
+
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
     -- All clients will match this rule.
@@ -524,9 +560,10 @@ awful.rules.rules = {
     -- { rule = { class = "Firefox" },
     --   properties = { screen = 1, tag = "2" } },
 }
--- }}}
 
--- {{{ Signals
+-- Signals
+--------------------------------------------------------------------------------
+
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function (c)
     -- Set the windows at the slave,
@@ -588,10 +625,10 @@ end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
--- }}}
 
 -- Startup applications
+--------------------------------------------------------------------------------
+
 -- Runs your autostart.sh script, which should include all the commands you
 -- would like to run every time AwesomeWM restarts
--- ===================================================================
 awful.spawn.with_shell( os.getenv("HOME") .. "/.config/awesome/autorun.sh")
