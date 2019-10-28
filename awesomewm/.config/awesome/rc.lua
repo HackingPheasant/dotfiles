@@ -26,6 +26,9 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+-- User created library
+local helpers = require("helpers")
+
 -- Error handling
 --------------------------------------------------------------------------------
 
@@ -41,11 +44,15 @@ end)
 
 -- Enviroment/Variable definitions and Theme Setup
 --------------------------------------------------------------------------------
+-- Default appications
 terminal = os.getenv("TERMINAL") or "kitty" or "x-terminal-emulator"
 browser = os.getenv("BROWSER") or "firefox"
 editor = os.getenv("EDITOR") or "vim"
 filemanager = "nautilus"
 editor_cmd = terminal .. " -e " .. editor
+
+-- Default directories
+screenshot_dir = os.getenv("HOME") .. "/Pictures/Screenshots/"
 
 -- Themes define colours, icons, font and wallpapers.
 local themes = {
@@ -359,13 +366,20 @@ globalkeys = gears.table.join(
               {description = "show the menubar", group = "launcher"}),
 
     -- screenshots
-    -- awful.key({                   }, "Print", function () awful.util.spawn("scrot 'Screenshot from %Y-%m-%d %H:%M:%S.png' -e 'mv "$f" $$(xdg-user-dir PICTURES)/Screenshots/'") end,
-    --    {description = "Screenshot", group = "screenshots"}),
-    -- awful.key({ modkey,           }, "Print", function () awful.util.spawn("scrot --select 'Screenshot from %Y-%m-%d %H:%M:%S.png' -e 'mv "$f" $$(xdg-user-dir PICTURES)/Screenshots/'") end,
-    --    {description = "Screenshot with mouse select", group = "screenshots"}),
-    -- awful.key({altkey,            }, "Print", function () awful.util.spawn("scrot --focused 'Screenshot from %Y-%m-%d %H:%M:%S.png' -e 'mv "$f" $$(xdg-user-dir PICTURES)/Screenshots/'") end,
-    --    {description = "Screenshot current window", group = "screenshots"}),
-    
+    -- TODO: Decide on non-conflicting keys to use
+    awful.key({                   }, "Print", function () helpers.screenshot("full") end,
+              {description = "Screenshot entire screen", group = "screenshots"}),
+    awful.key({ altkey,           }, "Print", function () helpers.screenshot("selection") end,
+              {description = "Screenshot selected area", group = "screenshots"}),
+    awful.key({ modkey,           }, "Print", function () helpers.screenshot("window") end,
+              {description = "Screenshot current window", group = "screenshots"}),
+    --awful.key({ altkey, "v"       }, "Print", function () helpers.screenshot("clipboard") end,
+    --          {description = "Screenshot selected area and copy to clipboard", group = "screenshots"}),
+    --awful.key({ modkey, "b"       }, "Print", function () helpers.screenshot("browse") end,
+    --          {description = "Browse Screenshots", group = "screenshots"}),
+    --awful.key({ modkey, "g"       }, "Print", function () helpers.screenshot("gimp") end,
+    --          {description = "Edit most recent screenshot with gimp", group = "screenshots"}),
+
     -- sound
     awful.key({                   }, "XF86AudioMute", function () awful.util.spawn("amixer sset Master toggle") end,
               {description = "Toggle Sound", group = "Sound"}),
