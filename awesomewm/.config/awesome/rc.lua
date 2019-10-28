@@ -356,7 +356,7 @@ globalkeys = gears.table.join(
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
+              {description = "show the menubar", group = "launcher"}),
 
     -- screenshots
     -- awful.key({                   }, "Print", function () awful.util.spawn("scrot 'Screenshot from %Y-%m-%d %H:%M:%S.png' -e 'mv "$f" $$(xdg-user-dir PICTURES)/Screenshots/'") end,
@@ -367,12 +367,12 @@ globalkeys = gears.table.join(
     --    {description = "Screenshot current window", group = "screenshots"}),
     
     -- sound
-    -- TODO (Keys to Implement)
-    --awful.key({                   }, "Print", function () awful.util.spawn("amixer -D sset Master ") end,
-    --          {description = "Screenshot", group = "screenshots"}),
-    -- XF86AudioRaiseVolume
-    -- XF86AudioLowerVolume
-    -- XF86AudioMute
+    awful.key({                   }, "XF86AudioMute", function () awful.util.spawn("amixer sset Master toggle") end,
+              {description = "Toggle Sound", group = "Sound"}),
+    awful.key({                   }, "XF86AudioRaiseVolume", function () awful.util.spawn("amixer sset Master 5%+") end,
+              {description = "Raise Volume", group = "Sound"}),
+    awful.key({                   }, "XF86AudioLowerVolume", function () awful.util.spawn("amixer sset Master 5%-") end,
+              {description = "Lower Volume", group = "Sound"})
     
     -- brightness
     -- TODO (Keys to Implement)
