@@ -538,7 +538,9 @@ awful.rules.rules = {
           "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
           "Wpa_gui",
           "veromix",
-          "xtightvncviewer"},
+          "xtightvncviewer",
+          "Ghidra",
+      },
 
         -- Note that the name property shown in xprop might be set slightly after creation of the client
         -- and the name shown there might not match defined rules here.
@@ -566,6 +568,9 @@ awful.rules.rules = {
         name = { 
             "Authentication Required", -- budgie-polkit-dialog
         }}, properties = { titlebars_enabled = false }},
+    -- Set Ghidra to always show up on tag 9
+    { rule = { class = "Ghidra" },
+      properties = { tag = "9" } },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
