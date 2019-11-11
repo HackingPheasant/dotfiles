@@ -377,9 +377,7 @@ awful.keyboard.append_global_keybindings({
 })
 
 -- My Customisations 
-awful.keyboard.append_global_keybindings({
-    awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
-              {description = "open a terminal", group = "launcher"}),
+awful.keyboard.append_global_keybindings({ 
     awful.key({ modkey,           }, "e", function () awful.spawn(filemanager) end,
               {description = "open a filemanager", group = "launcher"}),
 
@@ -419,7 +417,7 @@ clientkeys = {
             c:raise()
         end,
         {description = "toggle fullscreen", group = "client"}),
-    awful.key({ modkey, shiftkey  }, "F4",      function (c) c:kill()                        end,
+    awful.key({ altkey,           }, "F4",      function (c) c:kill()                        end,
               {description = "close", group = "client"}),
     awful.key({ modkey, ctrlkey   }, "space",  awful.client.floating.toggle                     ,
               {description = "toggle floating", group = "client"}),
