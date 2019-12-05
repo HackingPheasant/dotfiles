@@ -103,3 +103,16 @@ if has('langmap') && exists('+langremap')
   " compatible).
   set nolangremap
 endif
+
+" Plugins
+
+" Intergrate GDB into vim
+if has('terminal')
+    packadd! termdebug
+endif
+
+
+" Custom Commands
+
+" F3 opens termdebug with specific layout
+nnoremap <F3> :Termdebug <CR><c-w>2j<c-w>L<c-w>h
