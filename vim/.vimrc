@@ -114,5 +114,8 @@ endif
 
 " Custom Commands
 
+" Properly display nfo files
+autocmd BufRead,BufNewFile *.nfo,*.NFO set ft=nfo
+
 " F3 opens termdebug with specific layout
 nnoremap <F3> :Termdebug <CR><c-w>2j<c-w>L<c-w>h
