@@ -6,7 +6,7 @@ cd ~ && mkdir -P GitHub && cd GitHub
 # dependices on solus so I took my best go
 # at installing as much as possible
 sudo eopkg it python-devel python3-devel lzop lzo lzo-devel capstone capstone-devel p7zip e2fsprogs e2fsprogs-devel
-sudo pip3 install pylzma nose coverage pycrypto pyqtgraph capstone cstruct python-lzo
+sudo pip3 install pylzma nose coverage pycrypto pyqtgraph capstone cstruct python-lzo matplotlib
 wget -O - http://my.smithmicro.com/downloads/files/stuffit520.611linux-i386.tar.gz | tar -zxv bin/unstuff && mv bin/unstuff ~/.local/bin/ && rmdir bin/
 sudo pip3 install git+git://github.com/devttys0/yaffshiv.git@master
 sudo pip3 install git+git://github.com/jrspruitt/ubi_reader.git@master
