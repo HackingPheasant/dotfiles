@@ -101,20 +101,13 @@ awful.layout.layouts = {
 
 local SYSTEMCTL="systemctl -q --no-block"
 
-session = {
-    -- lock        = SYSTEMCTL .. " --user start lock.target",
-    sleep       = SYSTEMCTL .. " suspend",
-    logout      = SYSTEMCTL .. " --user exit",
-    restart     = SYSTEMCTL .. " reboot",
-    shutdown    = SYSTEMCTL .. " poweroff"
+mysessionmenu = {
+    -- { "Lock", SYSTEMCTL .. " --user start lock.target" },
+    { "Sleep", SYSTEMCTL .. " suspend" },
+    { "Logout", SYSTEMCTL .. " --user exit" },
+    { "Restart", SYSTEMCTL .. " reboot" },
+    { "Shutdown", SYSTEMCTL .. " poweroff" },
 }
-
--- Create sub menus
-
-mysessionmenu = {}
-for k, v in pairs(session) do
-    table.insert(mysessionmenu, {k, v})
-end
 
 mysystemmenu = {
     { "General Overview", terminal .. " -e gotop" },
@@ -384,30 +377,31 @@ awful.keyboard.append_global_keybindings({
     -- screenshots
     -- TODO: Decide on non-conflicting keys to use
     awful.key({                   }, "Print", function () helpers.screenshot("full") end,
-              {description = "Screenshot entire screen", group = "screenshots"}),
+              {description = "Screenshot entire screen", group = "Screenshots"}),
     awful.key({ altkey,           }, "Print", function () helpers.screenshot("selection") end,
-              {description = "Screenshot selected area", group = "screenshots"}),
+              {description = "Screenshot selected area", group = "Screenshots"}),
     awful.key({ modkey,           }, "Print", function () helpers.screenshot("window") end,
-              {description = "Screenshot current window", group = "screenshots"}),
+              {description = "Screenshot current window", group = "Screenshots"}),
     --awful.key({ altkey, "v"       }, "Print", function () helpers.screenshot("clipboard") end,
-    --          {description = "Screenshot selected area and copy to clipboard", group = "screenshots"}),
+    --          {description = "Screenshot selected area and copy to clipboard", group = "Sceenshots"}),
     --awful.key({ modkey, "b"       }, "Print", function () helpers.screenshot("browse") end,
-    --          {description = "Browse Screenshots", group = "screenshots"}),
+    --          {description = "Browse Screenshots", group = "Screenshots"}),
     --awful.key({ modkey, "g"       }, "Print", function () helpers.screenshot("gimp") end,
-    --          {description = "Edit most recent screenshot with gimp", group = "screenshots"}),
+    --          {description = "Edit most recent screenshot with gimp", group = "Screenshots"}),
 
     -- sound
     awful.key({                   }, "XF86AudioMute", function () awful.util.spawn("amixer sset Master toggle") end,
-              {description = "Toggle Sound", group = "Sound"}),
+              {description = "Toggle Sound", group = "Function Keys"}),
     awful.key({                   }, "XF86AudioRaiseVolume", function () awful.util.spawn("amixer sset Master 5%+") end,
-              {description = "Raise Volume", group = "Sound"}),
+              {description = "Raise Volume", group = "Function Keys"}),
     awful.key({                   }, "XF86AudioLowerVolume", function () awful.util.spawn("amixer sset Master 5%-") end,
-              {description = "Lower Volume", group = "Sound"})
+              {description = "Lower Volume", group = "Function Keys"}),
     
     -- brightness
-    -- TODO (Keys to Implement)
-    -- XF86MonBrightnessUp
-    -- XF86MonBrightnessDown
+    awful.key({                   }, "XF86MonBrightnessUp", function () awful.util.spawn("xbacklight -inc 5%") end,
+              {description = "Increase Brightness", group = "Function Keys"}),
+    awful.key({                   }, "XF86MonBrightnessDown", function () awful.util.spawn("xbacklight -dec 5%") end,
+              {description = "Decrease Brightness", group = "Function Keys"})
 })
 
 clientkeys = {
@@ -552,7 +546,7 @@ awful.rules.rules = {
           "DTA",  -- Firefox addon DownThemAll.
           "copyq",  -- Includes session name in class.
           "pinentry",
-          "nautilus", -- gnome filemanager
+          "nautilus", -- gnome filemanager 
         },
         class = {
           "Arandr",
@@ -566,23 +560,30 @@ awful.rules.rules = {
           "veromix",
           "xtightvncviewer",
           "Ghidra",
-      },
-
+          "mpv",
+          "feh",
+        },
         -- Note that the name property shown in xprop might be set slightly after creation of the client
         -- and the name shown there might not match defined rules here.
         name = {
           "Event Tester",  -- xev.
-          "Authentication Required", -- budgie-polkit-dialog
+          "Authentication Required", -- budgie-polkit-dialog 
         },
         role = {
           "AlarmWindow",  -- Thunderbird's calendar.
           "ConfigManager",  -- Thunderbird's about:config.
           "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
-        }
-      }, properties = { floating = true }},
+        }}, properties = { floating = true }},
+    
+    -- Always on-top
+    { rule_any = {
+        class = {
+            "mpv",
+        }}, properties = { ontop = true }},
+
 
     -- Add titlebars to normal clients and dialogs
-    { rule_any = {type = { "normal", "dialog" }
+    { rule_any = { type = { "normal", "dialog" }
       }, properties = { titlebars_enabled = true }
     },
 
@@ -596,12 +597,11 @@ awful.rules.rules = {
         }}, properties = { titlebars_enabled = false }},
 
     -- Set Ghidra to always show up on tag 9
-    { rule = { class = "Ghidra" },
-      properties = { tag = "9" } },
+    { rule_any = {
+        class = {
+            "Ghidra", 
+    }}, properties = { tag = "9" }},
 
-    -- Set Firefox to always map on the tag named "2" on screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { screen = 1, tag = "2" } },
 }
 
 -- Signals
