@@ -111,12 +111,20 @@ if has('terminal')
     packadd! termdebug
 endif
 
+" Custom Functions
+" Properly display nfo files
+autocmd BufRead,BufNewFile *.nfo,*.NFO set ft=nfo
+
+function! LazyCompile()
+    if filereadable("./Makefile")
+        make
+    else
+        make %<
+    end
+endfunction
 
 " Custom Commands
 " Note: Use <c-u> after : to clear the command line.
-
-" Properly display nfo files
-autocmd BufRead,BufNewFile *.nfo,*.NFO set ft=nfo
 
 " TODO: Add command to close windows all at once
 " F3 opens termdebug with specific layout
@@ -124,6 +132,6 @@ nnoremap <F3> :<c-u>Termdebug <CR><c-w>2j<c-w>L<c-w>h
 
 " TODO: Make these more flexible
 " F5 to compile
-nnoremap <silent> <F5> :<c-u>make %<<cr>
+nnoremap <silent> <F5> :<c-u>call LazyCompile()<cr>
 " Ctrl+F5 to run compiled program
 nnoremap <silent> <C-F5> :<c-u>vertical term ./%<<cr>
