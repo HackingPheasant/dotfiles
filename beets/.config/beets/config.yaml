@@ -17,6 +17,7 @@ plugins:
     - lastgenre
     - mbsync
     # Path Format Plugins
+    - bucket
     - inline
     # Interoperability
     - badfiles
@@ -31,7 +32,7 @@ plugins:
     - random
     - web
     # Other/External Plugins
-    # - copyartifacts
+    # - copyartifacts (Current plugin has lost dev support)
     # - check
 
 threaded: yes
@@ -63,16 +64,54 @@ match:
 # Done in order listed. Default is special and will always go at the end.
 # e.g. If I had an album with the albumtype $soundtrack and $compilation
 # Then the path that matchs first takes precedence.
-paths:
-    default: Music/$albumartist/($year) $album%aunique{} $ep$single$live$bootleg/%if{$multidisc,Disc $disc/}$track. $title
+paths: 
+    default: Music/%bucket{$albumartist}/$albumartist/($year) $album%aunique{} $ep$single$live$bootleg/%if{$multidisc,Disc $disc/}$track. $title 
+    vinylorcassette:1: Music/%bucket{$albumartist}/$albumartist/($year) $album%aunique{} $ep$single$live$vinyl$cassette$bootleg/%if{$multidisc,Disc $disc/}$track_alt. $title
+    albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{} ($year)/%if{$multidisc,Disc $disc/}$track. $artist - $title
+    comp: Music/Compilations/$album%aunique{} ($year) $ep$single$live$bootleg/%if{$multidisc,Disc $disc/}$track. $artist - $title 
     singleton: Music/Non-Album/$artist/$title
-    vinylorcassette:1: Music/$albumartist/($year) $album%aunique{} $ep$single$live$vinyl$cassette$bootleg/%if{$multidisc,Disc $disc/}$track_alt. $title
-    albumtype:soundtrack: Original Sound Tracks (OST)/$album%aunique{} ($year)/%if{$multidisc,Disc $disc/}$track. $artist - $title
-    comp: Compilations/$album%aunique{} ($year) $ep$single$live$bootleg/%if{$multidisc,Disc $disc/}$track. $artist - $title
-    albumtype:other: Other/$albumartist/$album%aunique{} $ep$single$live$bootleg ($year)/%if{$multidisc,Disc $disc/}$track. $title
-    albumtype:audiobook: Audiobooks/$artist/$album%aunique{}/%if{$multidisc,Disc $disc/}$track. $title
     # Add christmas=1 while importing to add to Christmas Music Collection
     christmas:1: Christmas Music Collection/$artist - $title
+    # Non-Music Related Audio
+    albumtype:other: Other/%bucket{$albumartist}/$albumartist/$album%aunique{} $ep$single$live$bootleg ($year)/%if{$multidisc,Disc $disc/}$track. $title
+    albumtype:audiobook: Audiobooks/$%bucket{artist}/$artist/$album%aunique{}/%if{$multidisc,Disc $disc/}$track. $title
+
+bucket:
+    # TODO: Deal with Various Artists/Various Artists/ Problem
+    bucket_alpha:
+    - '#-!'
+    - '0-9'
+    - 'A'
+    - 'B'
+    - 'C'
+    - 'D'
+    - 'E'
+    - 'F'
+    - 'G'
+    - 'H'
+    - 'I'
+    - 'J'
+    - 'K'
+    - 'L'
+    - 'M'
+    - 'N'
+    - 'O'
+    - 'P'
+    - 'Q'
+    - 'R'
+    - 'S'
+    - 'T'
+    - 'U'
+    # - 'Various Artists'
+    - 'V'
+    - 'W'
+    - 'X'
+    - 'Y'
+    - 'Z'
+    bucket_alpha_regex:
+        '#-!': ^[^0-9a-zA-Z]
+    bucket_year: []
+    extrapolate: no
 
 # Plugin Configurations
 
@@ -126,4 +165,4 @@ item_fields:
     live: u'[Live]' if albumtype == 'live' else ''
 
 play:
-    command: /usr/bin/deadbeef
+    command: /usr/bin/mpv
