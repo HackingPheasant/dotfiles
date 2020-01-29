@@ -135,3 +135,5 @@ nnoremap <F3> :<c-u>Termdebug <CR><c-w>2j<c-w>L<c-w>h
 nnoremap <silent> <F5> :<c-u>call LazyCompile()<cr>
 " Ctrl+F5 to run compiled program
 nnoremap <silent> <C-F5> :<c-u>vertical term ./%<<cr>
+
+inoremap {<Enter> {<Enter>}<Esc>O
