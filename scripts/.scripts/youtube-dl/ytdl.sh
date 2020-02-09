@@ -1,4 +1,9 @@
 #! /bin/bash
+# TODO:
+# - Make it so passing a single url it can download
+# - Make the post processing sripts more efficent (Basically only run on whats needed and not everything)
+
+#set -x
 
 # Kill script on SIGKILL
 # ctrl+c will stop script
@@ -7,21 +12,28 @@ trap 'trap - INT; kill -s HUP -- -$$' INT
 # Enable globstar
 shopt -s globstar
 
-if [[ -z $1 ]]; then
-    LINKS=$(<$HOME/.scripts/youtube-dl/youtube-channels.txt)
-else
-    LINKS=$(<$1)
-fi
+# Global Variables
+VERBOSE=0 # Currently does nothing
+VERSION="1.0.0"
+# 0 = run whole script
+# 1 = no post processing
+# 2 = only post processing
+POSTPROCESS=0 
 
-# TODO:
-# - Pass flags so only certain portions of this script can be run
-# - Make it so passing a single url it can download
-# - Make it less youtube specific and more general purpose while also being true to its original purpose
-# - Make the post processing sripts more efficent (Basically only run on whats needed and not everything)
-# Note: I may need to convert this to a python script at some point for these TODO's to become reality
-# and at some point the bash script will become unwieldy
+# Functions
+function check-exists() {
+    if [[ -z $(command -v "$1") ]]; then
+        echo "Missing dependency: $i"
+        exit 1
+    fi
+}
 
-function convert-to-mkv {
+function die() {
+    echo "$1" >&2
+    exit 1
+}
+
+function convert-to-mkv() {
     title="${file%.*}"
     echo "[mkvmerge] Muxing $title to mkv"
     mkvmerge -o "$title.mkv" "$title.mp4"
@@ -29,7 +41,7 @@ function convert-to-mkv {
     wait
 }
 
-function merge-covers {
+function merge-covers() {
     # Merge covers into mkv
     title="${file%.*}"
     if [[ -e "$title.mkv" ]]; then
@@ -41,7 +53,7 @@ function merge-covers {
     wait
 }
 
-function replace-placeholder-text {
+function replace-placeholder-text() {
     # Replace Audio and Video placeholders with Format
     audio="$(mediainfo "--Output=Audio;%Format%" "$file")"
     video="$(mediainfo "--Output=Video;%Format%" "$file")"
@@ -49,28 +61,186 @@ function replace-placeholder-text {
     wait
 }
 
-for i in $LINKS; do
-    # view=1 to view all playlists otherwise you might not catch all playlists
-    # goodgameabctv is a good example of this coming in useful
-    # FYI, I am keeping the generic config options  in the config file 
-    # and then passing the unique options on the commandline
-    youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube.conf --output '%(uploader)s/%(playlist)s/%(title)s [ID %(id)s] [WEB-DL-%(height)sp Video Audio].%(ext)s' --playlist-reverse --match-filter "playlist_title != 'Trending'" --match-filter "playlist_title != 'Liked videos'" --match-filter "playlist_title != 'Favorites'" "$i/playlists?view=1"
-    youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube.conf "$i"
-    echo "[script] Finished downloading channel $i"
-    wait
+# Dependency checks
+# Check if we have a version of bash new enough to use the features we want
+if [[ "${BASH_VERSINFO[0]}" -lt 4 ]]; then 
+    echo "Sorry, you need at least bash-4.0 to run this script." >&2 
+    exit 1
+fi
+
+# Check if we have required dependencies
+check-exists youtube-dl
+check-exists ffmpeg
+check-exists mkvmerge
+check-exists mediainfo
+
+# Help Text
+# https://stackoverflow.com/a/51911626
+__helptext="
+Usage: $(basename $0) [-v|--verbose] [ -l|--links links.txt ] [ -s|--site youtube ]
+
+Options:
+-l, --links <links>          Pass a list of links to use.
+-s, --site <site>            Pass what site you are downloading from, values include:
+                                - twitch (For quick and dirty rips)
+                                - twitch-archive (For a proper channel archive which is semi-sorted)
+                                - youtube (For quick and dirty rips)
+                                - youtube-archive (For a proper channel archive which is semi-sorted)
+                             NOTE: If the flag isn't used it'll assume the generic.conf which is a 
+                             config with the smallest amount of options enabled.
+--no-postprocess             Disables post processing, this includes converting to MKV, embedding covers
+                             and replacing the AUDIO and VIDEO placeholder text
+--only-postprocess           Only run the post processing steps and not the download steps
+-v, --verbose                Verbose output.
+-h, --help                   Prints this help.
+--version                    Prints version.
+"
+
+# Parse user flags
+# https://stackoverflow.com/a/28466267
+# https://stackoverflow.com/a/46793269
+optspec=":l:s:v:h:-:" 
+while getopts "$optspec" OPTCHAR; do
+    case "${OPTCHAR}" in
+        -)
+            case "${OPTARG}" in
+                help)
+                    echo "$__helptext" >&2
+                    exit 2
+                    ;;
+                links)
+                    opt=${OPTARG}
+                    val="${!OPTIND}"
+                    # check value. If negative, assume user forgot value
+                    if [[ "$val" == -* ]]; then
+                        die "ERROR: --$opt value must not have dash at beginning"
+                    fi
+                    readarray -t LINKS < ${OPTARG}
+                    shift
+                    ;;
+                site)
+                    opt=${OPTARG}
+                    val="${!OPTIND}"
+                    # check value. If negative, assume user forgot value
+                    if [[ "$val" == -* ]]; then
+                        die "ERROR: --$opt value must not have dash at beginning"
+                    fi
+                    SITE="${val}"
+                    shift
+                    ;;
+                no-postprocess)
+                    POSTPROCESS=1
+                    ;;
+                only-postprocess)
+                    POSTPROCESS=2
+                    ;;
+                verbose)
+                    VERBOSE=1
+                    ;;
+                version)
+                    echo "$VERSION" >&2
+                    exit 2
+                    ;;
+                *)
+                    if [ "$OPTERR" = 1 ] && [ "${optspec:0:1}" != ":" ]; then
+                        echo "Unknown option --${OPTARG}" >&2
+                    fi
+                    ;;
+            esac
+            ;;
+        h|-\?|--help)
+            echo "$__helptext" >&2
+            exit 2
+            ;;
+        l)
+            readarray -t LINKS < ${OPTARG}
+            ;;
+        s)
+            SITE=${OPTARG}
+            ;;
+        v)
+            VERBOSE=1
+            ;;
+        *) 
+            if [ "$OPTERR" != 1 ] || [ "${optspec:0:1}" = ":" ]; then
+                echo "ERROR: Non-option argument: '-${OPTARG}'" >&2
+            fi
+            ;;
+    esac
 done
 
-for file in **/*.mp4; do
-    convert-to-mkv
-    wait
-done
+# Actual Script
+# Download the files
+if [[ "$POSTPROCESS" != 2 ]]; then
+    case "$SITE" in
+        "twitch")
+            for i in "${LINKS[@]}"; do
+                youtube-dl --config-location $HOME/.scripts/youtube-dl/twitch.conf "$i"
+                echo "[script] Finished downloading channel $i"
+                wait
+            done
+            ;;           
+        "twitch-archive")
+            # Check if we passed any links to $LINKS, if not then use our default list.
+            if [[ -z ${LINKS[@]} ]]; then
+                readarray -t LINKS < $HOME/.scripts/youtube-dl/twitch-channels.txt
+            fi
 
-for file in **/*.jpg; do
-    merge-covers
-    wait
-done
+            for i in "${LINKS[@]}"; do    
+                # Note: youtube-dl has a bug where you cant rip user channels as it says they are offline
+                # Work around until it gets fixed is append /all onto user channels
+                # https://github.com/ytdl-org/youtube-dl/issues/22979
+                youtube-dl --config-location $HOME/.scripts/youtube-dl/twitch.conf "$i"/videos/all
+                echo "[script] Finished downloading channel $i"
+                wait
+            done
+            ;;
+        "youtube")
+            for i in "${LINKS[@]}"; do
+                youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube.conf "$i"
+                echo "[script] Finished downloading channel $i"
+                wait
+            done
+            ;;
+        "youtube-archive")
+            # Check if we passed any links to $LINKS, if not then use our default list.
+            if [[ -z ${LINKS[@]} ]]; then
+                readarray -t LINKS < $HOME/.scripts/youtube-dl/yotube-channels.txt
+            fi
 
-for file in **/*.mkv; do
-    replace-placeholder-text
-    wait
-done
+            for i in "${LINKS[@]}"; do
+                # view=1 to view all playlists otherwise you might not catch all playlists
+                # goodgameabctv is a good example of this coming in useful
+                youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube.conf --output '%(uploader)s/%(playlist)s/%(title)s [ID %(id)s] [WEB-DL-%(height)sp Video Audio].%(ext)s' --playlist-reverse --match-filter "playlist_title != 'Trending'" --match-filter "playlist_title != 'Liked videos'" --match-filter "playlist_title != 'Favorites'" "$i/playlists?view=1"
+                youtube-dl --config-location $HOME/.scripts/youtube-dl/youtube.conf "$i"
+                echo "[script] Finished downloading channel $i"
+                wait
+            done
+            ;;
+        *)
+            for i in "${LINKS[@]}"; do
+                youtube-dl --config-location $HOME/.scripts/youtube-dl/generic.conf "$i"
+                echo "[script] Finished downloading $i"
+                wait
+            done
+            ;;
+    esac
+fi
+
+# Post Processing
+if [[ "$POSTPROCESS" != 1 ]]; then
+    for file in **/*.mp4; do
+        convert-to-mkv
+        wait
+    done
+
+    for file in **/*.jpg; do
+        merge-covers
+        wait
+    done
+
+    for file in **/*.mkv; do
+        replace-placeholder-text
+        wait
+    done
+fi
