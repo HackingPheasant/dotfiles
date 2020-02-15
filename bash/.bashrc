@@ -1,11 +1,21 @@
 # ~/.bashrc - bash interactive startup file
 # vim: ft=sh
 
-if [[ $(lsb_release -i) == *Solus* ]]; then
-        # Source solus stateless config
-        # the stateless concept - a strict separation between User and System files for easier OS manageability.
-        source /usr/share/defaults/etc/profile
-fi
+function source-system-stuff () {
+    uname="$(uname -a)"
+    
+    # Android - if android then exit
+    [[ "$uname" =~ Android ]] && return
+    
+    # Solus
+    if [[ $(lsb_release -a) =~ Solus ]]; then
+            # Source solus stateless config
+            # the stateless concept - a strict separation between User and System files for easier OS manageability.
+            source /usr/share/defaults/etc/profile
+    fi
+}
+
+source-system-stuff
 
 have() { command -v "$1" >&/dev/null; }
 
