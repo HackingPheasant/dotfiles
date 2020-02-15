@@ -30,7 +30,6 @@ setpath PATH \
 
 DOTNET_ROOT="$PREFIX/lib/dotnet"
 GEM_HOME="$PREFIX/lib/gems"
-PT7HOME="/opt/pt" # Cisco Packet Tracer
 
 # http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
 
