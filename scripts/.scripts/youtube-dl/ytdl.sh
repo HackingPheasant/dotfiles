@@ -2,6 +2,9 @@
 # TODO:
 # - Make it so passing a single url it can download
 # - Make the post processing sripts more efficent (Basically only run on whats needed and not everything)
+# - parse abc iviews api and grab all ep from series url only, currently have to pass each ep url
+#   https://iview.abc.net.au/api/shows/
+# - Pre-process abc-iview titles so I can get them into a format I prefer
 
 #set -x
 
@@ -82,6 +85,8 @@ Usage: $(basename $0) [-v|--verbose] [ -l|--links links.txt ] [ -s|--site youtub
 Options:
 -l, --links <links>          Pass a list of links to use.
 -s, --site <site>            Pass what site you are downloading from, values include:
+                                - iview (only tested against abc iview)
+                                - iview-series (only tested against abv iview)
                                 - twitch (For quick and dirty rips)
                                 - twitch-archive (For a proper channel archive which is semi-sorted)
                                 - youtube (For quick and dirty rips)
@@ -173,6 +178,22 @@ done
 # Download the files
 if [[ "$POSTPROCESS" != 2 ]]; then
     case "$SITE" in
+        "iview")
+            for i in "${LINKS[@]}"; do
+                youtube-dl --config-location $HOME/.scripts/youtube-dl/iview.conf "$i"
+                echo "[script] Finished downloading series $i"
+                wait
+            done
+            ;;
+        "iview-series")
+            for i in "${LINKS[@]}"; do
+                # The way they name thier episodes are weird, will need to do some pre processing to get into my preferred format.
+                # youtube-dl --config-location $HOME/.scripts/youtube-dl/iview.conf --output '%(series)s/Season 0%(season_number)s/%(series)s - S0%(season_number)sE%(episode_number)s [WEB-DL-%(height)sp Video Audio].%(ext)s' "$i"
+                youtube-dl --config-location $HOME/.scripts/youtube-dl/iview.conf --output '%(series)s/Season 0%(season_number)s/%(title)s [WEB-DL-%(height)sp Video Audio].%(ext)s' "$i"
+                echo "[script] Finished downloading series $i"
+                wait
+            done
+            ;;
         "twitch")
             for i in "${LINKS[@]}"; do
                 youtube-dl --config-location $HOME/.scripts/youtube-dl/twitch.conf "$i"
