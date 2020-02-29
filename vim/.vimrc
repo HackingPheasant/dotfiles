@@ -97,6 +97,9 @@ set encoding=utf-8
 set fileencoding=utf-8
 set termencoding=utf-8
 
+" When using spellcheck press CTRL-N or CTRL-P in insert-mode to complete the word
+set complete+=kspell
+
 if has('langmap') && exists('+langremap')
   " Prevent that the langmap option applies to characters that result from a
   " mapping.  If set (default), this may break plugins (but it's backward
@@ -114,6 +117,10 @@ endif
 " Custom Functions
 " Properly display nfo files
 autocmd BufRead,BufNewFile *.nfo,*.NFO set ft=nfo
+
+" Spell check the following files/filetypes
+autocmd BufRead,BufNewFile *.md setlocal spell spelllang=en
+autocmd FileType gitcommit setlocal spell
 
 function! LazyCompile()
     if filereadable("./Makefile")
