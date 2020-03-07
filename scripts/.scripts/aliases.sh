@@ -70,15 +70,20 @@ alias ips="ifconfig -a | grep -o 'inet6\\? \\(addr:\\)\\?\\s\\?\\(\\(\\([0-9]\\+
 
 # misc functions
 cat() {
-	if [[ $1 == *://* ]]; then
-		curl -LsfS "$1"
-	else
-		command cat "$@"
-	fi
+    if [[ $1 == *://* ]]; then
+        curl -LsfS "$1"
+    else
+        command cat "$@"
+    fi
 }
 
 ytdl() { $HOME/.scripts/youtube-dl/ytdl.sh "$@"; }
 bwfzf() { $HOME/.scripts/bwfzf/bwfzf; }
+ns-cart() {
+    CRC=$(crc32 "$1")  
+    curl "https://datomatic.nointro.org/qchknsw.php?f=cart&crc="$CRC 
+    echo
+}
 
 # package management
 
