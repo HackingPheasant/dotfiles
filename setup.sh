@@ -11,7 +11,7 @@ sudo eopkg install -c system.devel
 # Install some programs I find useful
 sudo eopkg rm gnome-mpv thunderbird transmission rhythmbox
 sudo eopkg install git stow rclone kitty mpv vim vlc beets keyutils fzf jq discord riot ncdu p7zip deluge mkvtoolnix mediainfo gtkhash gtkhash-nautilus-extension
-sudo pip3 install internetarchive pylast
+sudo pip3 install internetarchive pylast beets-extrafiles
 # sudo pip3 install git+git://github.com/geigerzaehler/beets-check.git@master
 # Dependicies for buku and bukuserver
 # Probley best to do this inside a virtual env but eh...

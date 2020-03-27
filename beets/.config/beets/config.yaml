@@ -32,8 +32,7 @@ plugins:
     - random
     - web
     # Other/External Plugins
-    # - copyartifacts (Current plugin has lost dev support)
-    # - check
+    - extrafiles 
 
 threaded: yes
 
@@ -127,7 +126,7 @@ embedart:
     auto: no
 
 convert:
-# auto: yes
+    # auto: yes
     copy_album_art: yes
     album_art_maxwidth: 600
     dest: ~/Audio/Music [Mobile version]/
@@ -147,9 +146,21 @@ convert:
             # in the file extension for making it easier on me in the future
             # when android media scanner picks up opus extensions properly
 
-copyartifacts:
-    extensions: .cue .CUE .log .LOG .jpg .jpeg .png .accurip .md5 .txt
-    print_ignored: yes
+extrafiles:
+    patterns:
+        artworkdir: 
+          - '[aA]rtwork/'
+        scansdir:
+          - '[sS]cans/'
+        logncue:
+          - '*.cue'
+          - '*.log'
+          - '*.accurip'
+          - '*.txt'
+    paths:
+        artworkdir: $albumpath/Artwork
+        scansdir: $albumpath/Scans
+        logncue: $albumpath/$filename
 
 lastgenre:
     count: 5
