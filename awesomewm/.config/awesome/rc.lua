@@ -579,8 +579,13 @@ awful.rules.rules = {
     { rule_any = {
         class = {
             "mpv",
-        }}, properties = { ontop = true }},
+        }}, properties = { ontop = false }},
 
+    -- Always maximized.
+    { rule_any = {
+        class = {
+            "mpv",
+        }}, properties = { maximized = true }},
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = { type = { "normal", "dialog" }
