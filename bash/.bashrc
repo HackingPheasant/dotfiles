@@ -15,17 +15,17 @@ function source-system-stuff () {
     fi
 }
 
+# Source first so system defaults are all set
+# Then I just overwrite what I want changed.
 source-system-stuff
 
 have() { command -v "$1" >&/dev/null; }
 
-if [[ ! $PREFIX ]]; then
-	. ~/.environ
-	# this currently happens when:
-	# - `sudo -s` preserves $HOME but cleans other envvars
-	# - bash is built with #define SSH_SOURCE_BASHRC (e.g. Debian)
-	#(. lib.bash && warn "had to load .environ from .bashrc")
-fi
+. ~/.environ
+# this currently happens when:
+# - `sudo -s` preserves $HOME but cleans other envvars
+# - bash is built with #define SSH_SOURCE_BASHRC (e.g. Debian)
+#(. lib.bash && warn "had to load .environ from .bashrc")
 
 if [[ $TERM == @(screen|tmux|xterm) ]]; then
 	OLD_TERM="$TERM"
