@@ -22,11 +22,13 @@ set -a
 
 PREFIX="$HOME/.local"
 
-setpath PATH \
+test "$_PATH_WAS_SET" || setpath PATH \
 	"$PREFIX/bin"				\
 	"$HOME/.scripts"			\
         "$PREFIX/gems/bin"                      \
 	"$PATH"					;
+
+_PATH_WAS_SET="yes"
 
 DOTNET_ROOT="$PREFIX/lib/dotnet"
 GEM_HOME="$PREFIX/lib/gems"
