@@ -47,6 +47,7 @@ shopt -s autocd 2>/dev/null     # assume 'cd' when trying to exec a directory
 shopt -s cdspell                # Autocorrect typos in path names when using `cd`
 shopt -s checkjobs 2> /dev/null # print job status on exit
 shopt -s checkwinsize           # update $ROWS/$COLUMNS after command
+shopt -s globstar		# the ** glob
 
 shopt -s cmdhist		# store multi-line commands as single history entry
 shopt -s histappend		# append to $HISTFILE on exit, rather than overwriting it
