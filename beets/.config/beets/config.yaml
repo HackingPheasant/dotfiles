@@ -23,6 +23,7 @@ plugins:
     - badfiles
     - play
     # Miscellaneous Plugins
+    - audit
     - convert
     - duplicates
     - export
