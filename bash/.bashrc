@@ -59,6 +59,7 @@ HISTCONTROL=ignoreboth
 HISTIGNORE='?:??'               # don't save trivial one and two character commands
 HISTTIMEFORMAT="(%F %T) "
 
+# TODO: Probably see about how easy it is to make shell antagonistic
 . ~/.scripts/prompt.sh
 . ~/.scripts/aliases.sh
 
