@@ -1,7 +1,4 @@
---------------------------------------------------------------------------------
---                              Main Config                                   --
---------------------------------------------------------------------------------
-
+-- awesome_mode: api-level=4:screen=on
 
 -- Load modules
 --------------------------------------------------------------------------------
@@ -20,6 +17,8 @@ local wibox = require("wibox")
 local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
+-- Declarative object management
+local ruled = require("ruled")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
@@ -78,13 +77,13 @@ shiftkey = "Shift"
 awful.layout.layouts = {
     awful.layout.suit.tile,
     awful.layout.suit.floating,
-    awful.layout.suit.corner.nw,
+    awful.layout.suit.corner.nw, 
+    awful.layout.suit.fair,
     awful.layout.suit.fair.horizontal,
     awful.layout.suit.tile.bottom,
     awful.layout.suit.tile.top,
     awful.layout.suit.spiral.dwindle,
     awful.layout.suit.max,
-    -- awful.layout.suit.fair,
     -- awful.layout.suit.tile.left,
     -- awful.layout.suit.spiral,
     -- awful.layout.suit.max.fullscreen,
@@ -147,47 +146,6 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
 
--- Create a wibox for each screen and add it
-local taglist_buttons = {
-    awful.button({ }, 1, function(t) t:view_only() end),
-    awful.button({ modkey }, 1, function(t)
-                                if client.focus then
-                                    client.focus:move_to_tag(t)
-                                end
-                            end),
-    awful.button({ }, 3, awful.tag.viewtoggle),
-    awful.button({ modkey }, 3, function(t)
-                                if client.focus then
-                                    client.focus:toggle_tag(t)
-                                end
-                            end),
-    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
-    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end),
-}
-
-local tasklist_buttons = {
-    awful.button({ }, 1, function (c)
-                            if c == client.focus then
-                                c.minimized = true
-                            else
-                                c:emit_signal(
-                                    "request::activate",
-                                    "tasklist",
-                                    {raise = true}
-                                )
-                            end
-                        end),
-    awful.button({ }, 3, function()
-                            awful.menu.client_list({ theme = { width = 250 } })
-                        end),
-    awful.button({ }, 4, function ()
-                            awful.client.focus.byidx(1)
-                        end),
-    awful.button({ }, 5, function ()
-                            awful.client.focus.byidx(-1)
-                        end),
-}
-
 screen.connect_signal("request::wallpaper", function(s)
     -- Wallpaper
     if beautiful.wallpaper then
@@ -206,6 +164,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
+
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
     s.mylayoutbox = awful.widget.layoutbox {
@@ -216,20 +175,42 @@ screen.connect_signal("request::desktop_decoration", function(s)
             awful.button({ }, 4, function () awful.layout.inc( 1) end),
             awful.button({ }, 5, function () awful.layout.inc(-1) end),
         }
-    }    
+    }
 
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {
         screen  = s,
         filter  = awful.widget.taglist.filter.all,
-        buttons = taglist_buttons
+        buttons = {
+            awful.button({ }, 1, function(t) t:view_only() end),
+            awful.button({ modkey }, 1, function(t)
+                                            if client.focus then
+                                                client.focus:move_to_tag(t)
+                                            end
+                                        end),
+            awful.button({ }, 3, awful.tag.viewtoggle),
+            awful.button({ modkey }, 3, function(t)
+                                            if client.focus then
+                                                client.focus:toggle_tag(t)
+                                            end
+                                        end),
+            awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
+            awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end),
+        }
     }
 
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist {
         screen  = s,
         filter  = awful.widget.tasklist.filter.currenttags,
-        buttons = tasklist_buttons
+        buttons = {
+            awful.button({ }, 1, function (c)
+                c:activate { context = "tasklist", action = "toggle_minimization" }
+            end),
+            awful.button({ }, 3, function() awful.menu.client_list { theme = { width = 250 } } end),
+            awful.button({ }, 4, function() awful.client.focus.byidx( 1) end),
+            awful.button({ }, 5, function() awful.client.focus.byidx(-1) end),
+        }
     }
 
     -- Create the wibox
@@ -335,9 +316,7 @@ awful.keyboard.append_global_keybindings({
                   local c = awful.client.restore()
                   -- Focus restored client
                   if c then
-                    c:emit_signal(
-                        "request::activate", "key.unminimize", {raise = true}
-                    )
+                    c:activate { raise = true, context = "key.unminimize" }
                   end
               end,
               {description = "restore minimized", group = "client"}),
@@ -404,216 +383,126 @@ awful.keyboard.append_global_keybindings({
               {description = "Decrease Brightness", group = "Function Keys"})
 })
 
-clientkeys = {
-    awful.key({ modkey,           }, "f",
-        function (c)
-            c.fullscreen = not c.fullscreen
-            c:raise()
-        end,
-        {description = "toggle fullscreen", group = "client"}),
-    awful.key({ altkey,           }, "F4",      function (c) c:kill()                        end,
-              {description = "close", group = "client"}),
-    awful.key({ modkey, ctrlkey   }, "space",  awful.client.floating.toggle                     ,
-              {description = "toggle floating", group = "client"}),
-    awful.key({ modkey, ctrlkey   }, "Return", function (c) c:swap(awful.client.getmaster()) end,
-              {description = "move to master", group = "client"}),
-    awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
-              {description = "move to screen", group = "client"}),
-    awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
-              {description = "toggle keep on top", group = "client"}),
-    awful.key({ modkey,           }, "n",
-        function (c)
-            -- The client currently has the input focus, so it cannot be
-            -- minimized, since minimized clients can't have the focus.
-            c.minimized = true
-        end ,
-        {description = "minimize", group = "client"}),
-    awful.key({ modkey,           }, "m",
-        function (c)
-            c.maximized = not c.maximized
-            c:raise()
-        end ,
-        {description = "(un)maximize", group = "client"}),
-    awful.key({ modkey, ctrlkey   }, "m",
-        function (c)
-            c.maximized_vertical = not c.maximized_vertical
-            c:raise()
-        end ,
-        {description = "(un)maximize vertically", group = "client"}),
-    awful.key({ modkey, shiftkey  }, "m",
-        function (c)
-            c.maximized_horizontal = not c.maximized_horizontal
-            c:raise()
-        end ,
-        {description = "(un)maximize horizontally", group = "client"}),
-}
-
--- Bind all key numbers to tags.
--- Be careful: we use keycodes to make it work on any keyboard layout.
--- This should map on the top row of your keyboard, usually 1 to 9.
-for i = 1, 9 do
-    -- View tag only.
-    awful.keyboard.append_global_keybinding(awful.key(
-        { modkey }, "#" .. i + 9,
-        function ()
+awful.keyboard.append_global_keybindings({
+    awful.key {
+        modifiers   = { modkey },
+        keygroup    = "numrow",
+        description = "only view tag",
+        group       = "tag",
+        on_press    = function (index)
             local screen = awful.screen.focused()
-            local tag = screen.tags[i]
+            local tag = screen.tags[index]
             if tag then
                 tag:view_only()
             end
         end,
-        {description = "view tag #"..i, group = "tag"}
-    ))
-
-    -- Toggle tag display.
-    awful.keyboard.append_global_keybinding(awful.key(
-        { modkey, ctrlkey  }, "#" .. i + 9,
-        function ()
+    },
+    awful.key {
+        modifiers   = { modkey, ctrlkey },
+        keygroup    = "numrow",
+        description = "toggle tag",
+        group       = "tag",
+        on_press    = function (index)
             local screen = awful.screen.focused()
-            local tag = screen.tags[i]
+            local tag = screen.tags[index]
             if tag then
                 awful.tag.viewtoggle(tag)
             end
         end,
-        {description = "toggle tag #" .. i, group = "tag"}
-    ))
-
-    -- Move client to tag.
-    awful.keyboard.append_global_keybinding(awful.key(
-        { modkey, shiftkey }, "#" .. i + 9,
-        function ()
+    },
+    awful.key {
+        modifiers = { modkey, shiftkey },
+        keygroup    = "numrow",
+        description = "move focused client to tag",
+        group       = "tag",
+        on_press    = function (index)
             if client.focus then
-                local tag = client.focus.screen.tags[i]
+                local tag = client.focus.screen.tags[index]
                 if tag then
                     client.focus:move_to_tag(tag)
                 end
             end
         end,
-        {description = "move focused client to tag #"..i, group = "tag"}
-    ))
-
-    -- Toggle tag on focused client.
-    awful.keyboard.append_global_keybinding(awful.key(
-        { modkey, ctrlkey, shiftkey }, "#" .. i + 9,
-        function ()
+    },
+    awful.key {
+        modifiers   = { modkey, ctrlkey, shiftkey },
+        keygroup    = "numrow",
+        description = "toggle focused client on tag",
+        group       = "tag",
+        on_press    = function (index)
             if client.focus then
-                local tag = client.focus.screen.tags[i]
+                local tag = client.focus.screen.tags[index]
                 if tag then
                     client.focus:toggle_tag(tag)
                 end
             end
         end,
-        {description = "toggle focused client on tag #" .. i, group = "tag"}
-    ))
-end
+    }
+})
 
-clientbuttons = {
-    awful.button({ }, 1, function (c)
-        c:emit_signal("request::activate", "mouse_click", {raise = true})
-    end),
-    awful.button({ modkey }, 1, function (c)
-        c:emit_signal("request::activate", "mouse_click", {raise = true})
-        awful.mouse.client.move(c)
-    end),
-    awful.button({ modkey }, 3, function (c)
-        c:emit_signal("request::activate", "mouse_click", {raise = true})
-        awful.mouse.client.resize(c)
-    end),
-}
+client.connect_signal("request::default_mousebindings", function()
+    awful.mouse.append_client_mousebindings({
+        awful.button({ }, 1, function (c)
+            c:activate { context = "mouse_click" }
+        end),
+        awful.button({ modkey }, 1, function (c)
+            c:activate { context = "mouse_click", action = "mouse_move"  }
+        end),
+        awful.button({ modkey }, 3, function (c)
+            c:activate { context = "mouse_click", action = "mouse_resize"}
+        end),
+    })
+end)
+
+client.connect_signal("request::default_keybindings", function()
+    awful.keyboard.append_client_keybindings({
+        awful.key({ modkey,           }, "f",
+            function (c)
+                c.fullscreen = not c.fullscreen
+                c:raise()
+            end,
+            {description = "toggle fullscreen", group = "client"}),
+        awful.key({ altkey,         }, "F4",      function (c) c:kill()                         end,
+                {description = "close", group = "client"}),
+        awful.key({ modkey, ctrlkey }, "space",  awful.client.floating.toggle                     ,
+                {description = "toggle floating", group = "client"}),
+        awful.key({ modkey, ctrlkey }, "Return", function (c) c:swap(awful.client.getmaster()) end,
+                {description = "move to master", group = "client"}),
+        awful.key({ modkey,         }, "o",      function (c) c:move_to_screen()               end,
+                {description = "move to screen", group = "client"}),
+        awful.key({ modkey,         }, "t",      function (c) c.ontop = not c.ontop            end,
+                {description = "toggle keep on top", group = "client"}),
+        awful.key({ modkey,         }, "n",
+            function (c)
+                -- The client currently has the input focus, so it cannot be
+                -- minimized, since minimized clients can't have the focus.
+                c.minimized = true
+            end ,
+            {description = "minimize", group = "client"}),
+        awful.key({ modkey,          }, "m",
+            function (c)
+                c.maximized = not c.maximized
+                c:raise()
+            end ,
+            {description = "(un)maximize", group = "client"}),
+        awful.key({ modkey, ctrlkey  }, "m",
+            function (c)
+                c.maximized_vertical = not c.maximized_vertical
+                c:raise()
+            end ,
+            {description = "(un)maximize vertically", group = "client"}),
+        awful.key({ modkey, shiftkey }, "m",
+            function (c)
+                c.maximized_horizontal = not c.maximized_horizontal
+                c:raise()
+            end ,
+            {description = "(un)maximize horizontally", group = "client"}),
+    })
+end)
 
 
--- Rules
---------------------------------------------------------------------------------
-
--- Rules to apply to new clients (through the "manage" signal).
-awful.rules.rules = {
-    -- All clients will match this rule.
-    { rule = { },
-      properties = { border_width = beautiful.border_width,
-                     border_color = beautiful.border_normal,
-                     focus = awful.client.focus.filter,
-                     raise = true,
-                     keys = clientkeys,
-                     buttons = clientbuttons,
-                     screen = awful.screen.preferred,
-                     placement = awful.placement.no_overlap+awful.placement.no_offscreen
-     }
-    },
-
-    -- Floating clients.
-    { rule_any = {
-        instance = {
-          "DTA",  -- Firefox addon DownThemAll.
-          "copyq",  -- Includes session name in class.
-          "pinentry",
-          "nautilus", -- gnome filemanager 
-        },
-        class = {
-          "Arandr",
-          "Blueman-manager",
-          "Gpick",
-          "Kruler",
-          "MessageWin",  -- kalarm.
-          "Sxiv",
-          "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
-          "Wpa_gui",
-          "veromix",
-          "xtightvncviewer",
-          "Ghidra",
-          "mpv",
-          "feh",
-        },
-        -- Note that the name property shown in xprop might be set slightly after creation of the client
-        -- and the name shown there might not match defined rules here.
-        name = {
-          "Event Tester",  -- xev.
-          "Authentication Required", -- budgie-polkit-dialog 
-        },
-        role = {
-          "AlarmWindow",  -- Thunderbird's calendar.
-          "ConfigManager",  -- Thunderbird's about:config.
-          "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
-        }}, properties = { floating = true }},
-    
-    -- Always on-top
-    { rule_any = {
-        class = {
-            "mpv",
-        }}, properties = { ontop = false }},
-
-    -- Always maximized.
-    { rule_any = {
-        class = {
-            "mpv",
-        }}, properties = { maximized = true }},
-
-    -- Add titlebars to normal clients and dialogs
-    { rule_any = { type = { "normal", "dialog" }
-      }, properties = { titlebars_enabled = true }
-    },
-
-    -- No  titlebars on select clients and dialogs
-    { rule_any = {
-        instance = {
-            "nautilus", -- gnome filemanager
-        },
-        name = { 
-            "Authentication Required", -- budgie-polkit-dialog
-        }}, properties = { titlebars_enabled = false }},
-
-    -- Set Ghidra to always show up on tag 9
-    { rule_any = {
-        class = {
-            "Ghidra", 
-    }}, properties = { tag = "9" }},
-
-}
-
--- Signals
---------------------------------------------------------------------------------
-
--- Signal function to execute when a new client appears.
-client.connect_signal("manage", function (c)
+-- Make first window open master, and the rest slaves
+client.connect_signal("request::manage", function (c)
     -- Set the windows at the slave,
     -- i.e. put it at the end of others instead of setting it master.
     if not awesome.startup then awful.client.setslave(c) end
@@ -626,17 +515,90 @@ client.connect_signal("manage", function (c)
     end
 end)
 
+-- Rules to apply to new clients.
+ruled.client.connect_signal("request::rules", function()
+    -- All clients will match this rule.
+    ruled.client.append_rule {
+        id         = "global",
+        rule       = { },
+        properties = {
+            focus     = awful.client.focus.filter,
+            raise     = true,
+            screen    = awful.screen.preferred,
+            placement = awful.placement.no_overlap+awful.placement.no_offscreen
+        }
+    }
+
+    -- Floating clients.
+    ruled.client.append_rule {
+        id       = "floating",
+        rule_any = {
+            instance = { "copyq", "pinentry", "nautilus"},
+            class    = {
+                "Arandr", "Blueman-manager", "Gpick", "Kruler", "Sxiv",
+                "Tor Browser", "Wpa_gui", "veromix", "xtightvncviewer",
+                "Ghidra", "mpv", "feh"
+            },
+            -- Note that the name property shown in xprop might be set slightly after creation of the client
+            -- and the name shown there might not match defined rules here.
+            name    = {
+                "Event Tester",  -- xev.
+                "Authentication Required", -- budgie-polkit-dialog 
+            },
+            role    = {
+                "AlarmWindow",    -- Thunderbird's calendar.
+                "ConfigManager",  -- Thunderbird's about:config.
+                "pop-up",         -- e.g. Google Chrome's (detached) Developer Tools.
+            }
+        },
+        properties = { floating = true }
+    }
+
+    -- Add titlebars to normal clients and dialogs
+    ruled.client.append_rule {
+        id         = "titlebars",
+        rule_any   = { type = { "normal", "dialog" } },
+        properties = { titlebars_enabled = true      }
+    }
+
+    -- No  titlebars on select clients and dialogs
+    ruled.client.append_rule {
+        rule_any   = { 
+            instance = {
+                "nautilus", -- gnome filemanager
+            },
+            name = { 
+                "Authentication Required", -- budgie-polkit-dialog
+            }
+        },
+        properties = { titlebars_enabled = false      }
+    }
+
+    -- Always maximized
+    ruled.client.append_rule {
+        rule       = { class = "mpv"     },
+        properties = { maximized = true  }
+    }
+
+    -- Ghidra always on tag 9
+    ruled.client.append_rule {
+        rule       = { class = "Ghidra" },
+        properties = { tag = "9"        }
+    }
+end)
+
+-- Titlebars
+--------------------------------------------------------------------------------
+
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal("request::titlebars", function(c)
     -- buttons for the titlebar
     local buttons = {
         awful.button({ }, 1, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.move(c)
+            c:activate { context = "titlebar", action = "mouse_move"  }
         end),
         awful.button({ }, 3, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.resize(c)
+            c:activate { context = "titlebar", action = "mouse_resize"}
         end),
     }
 
@@ -666,13 +628,31 @@ client.connect_signal("request::titlebars", function(c)
     }
 end)
 
--- Enable sloppy focus, so that focus follows mouse.
-client.connect_signal("mouse::enter", function(c)
-    c:emit_signal("request::activate", "mouse_enter", {raise = false})
+-- Notifications
+--------------------------------------------------------------------------------
+
+ruled.notification.connect_signal('request::rules', function()
+    -- All notifications will match this rule.
+    ruled.notification.append_rule {
+        rule       = { },
+        properties = {
+            screen           = awful.screen.preferred,
+            implicit_timeout = 5,
+        }
+    }
 end)
 
-client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+naughty.connect_signal("request::display", function(n)
+    naughty.layout.box { notification = n }
+end)
+
+-- Other
+--------------------------------------------------------------------------------
+
+-- Enable sloppy focus, so that focus follows mouse.
+client.connect_signal("mouse::enter", function(c)
+    c:activate { context = "mouse_enter", raise = false }
+end)
 
 -- Startup applications
 --------------------------------------------------------------------------------
