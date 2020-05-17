@@ -10,7 +10,7 @@ sudo eopkg install -c system.devel
 
 # Install some programs I find useful
 sudo eopkg rm gnome-mpv thunderbird transmission rhythmbox
-sudo eopkg install git stow rclone kitty mpv vim vlc beets keyutils fzf jq discord riot ncdu p7zip deluge mkvtoolnix mediainfo gtkhash gtkhash-nautilus-extension
+sudo eopkg install git stow rclone kitty mpv vim vlc beets keyutils fzf jq discord riot ncdu p7zip deluge mkvtoolnix mediainfo gtkhash gtkhash-nautilus-extension libva libva-intel-driver
 sudo pip3 install internetarchive pylast beets-extrafiles
 sudo pip3 install git+git://github.com/agsimmons/beets-audit.git@master
 # sudo pip3 install git+git://github.com/geigerzaehler/beets-check.git@master
@@ -25,6 +25,11 @@ sudo gem install bundler jekyll
 sudo eopkg install libvirt virt-manager
 sudo systemctl enable libvirtd.service
 sudo systemctl start libvirtd.service
+
+
+# Manual compile and install mandown with is a markdown viewier
+git clone https://github.com/Titor8115/mandown.git && cd mandown && make && \
+    sudo install -C -m 755 -o root -g root mandown /usr/bin/mdn
 
 # TODO:
 # - Stow my stuff automatically
