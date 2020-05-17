@@ -12,6 +12,7 @@ pager() { command ${PAGER:-more} "$@"; }
 count() { sort "$@" | uniq -c | sort -n -r | pager; }
 alias '*~'='rm *~'
 alias demo='PS1="\\n\\$ "'
+alias feh='feh --scale-down'
 alias gdb='gdb -q'
 alias gmpv='gnome-mpv'
 alias hd='hexdump -C'
