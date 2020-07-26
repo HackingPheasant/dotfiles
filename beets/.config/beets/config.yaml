@@ -1,11 +1,11 @@
-############################################################################
 ## Beets Configuration file.
 ## ~./config/beets/config.yaml
-#############################################################################
 
-### Global Options
+# Define directorty for music and beets db
 library: ~/Audio/.musiclibrary.db
 directory: ~/Audio/
+
+# Load plugins to extended beets (both internal and 3rd party)
 plugins:
     # Autotagger Extensions
     - fromfilename
@@ -35,11 +35,9 @@ plugins:
     # Other/External Plugins
     - extrafiles 
 
+# Program configuration
 threaded: yes
 
-per_disc_numbering: true
-
-# General Configuration
 ui:
     color: yes
 
@@ -54,7 +52,10 @@ import:
     bell: yes
     languages: en jp de 
 
+per_disc_numbering: true
+
 aunique:
+    # Drop some disambiguation fallbacks
     disambuguators: media mastering label catalognum albumdisambig releasegroupdisambig
 
 match:
@@ -65,71 +66,96 @@ match:
 # e.g. If I had an album with the albumtype $soundtrack and $compilation
 # Then the path that matchs first takes precedence.
 paths: 
-    default: Music/%bucket{$albumartist}/$albumartist/($year) $album%aunique{} $ep$single$live$bootleg/%if{$multidisc,Disc $disc/}$track. $title 
-    vinylorcassette:1: Music/%bucket{$albumartist}/$albumartist/($year) $album%aunique{} $ep$single$live$vinyl$cassette$bootleg/%if{$multidisc,Disc $disc/}$track_alt. $title
-    albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{} ($year)/%if{$multidisc,Disc $disc/}$track. $artist - $title
-    comp: Music/Compilations/$album%aunique{} ($year) $ep$single$live$bootleg/%if{$multidisc,Disc $disc/}$track. $artist - $title 
-    singleton: Music/Non-Album/$artist/$title
-    # Add christmas=1 while importing to add to Christmas Music Collection
-    christmas:1: Christmas Music Collection/$artist - $title
-    # Non-Music Related Audio
-    albumtype:other: Other/%bucket{$albumartist}/$albumartist/$album%aunique{} $ep$single$live$bootleg ($year)/%if{$multidisc,Disc $disc/}$track. $title
-    albumtype:audiobook: Audiobooks/$%bucket{artist}/$artist/$album%aunique{}/%if{$multidisc,Disc $disc/}$track. $title
+    # Beets inbuilt paths
+    default: Music/%upper{%left{{$albumartist_sort,1}}/$albumartist/%if{$hasyear, ($year)} $album%aunique{} $alb_type $alb_status $media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks, $track_alt, $track}. $title
+    comp: Music/Various Artists/$album%aunique{} %if{$hasyear, ($year)} $alb_type $alb_status $media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks, $track_alt, $track}. $title
+    singleton: Music/Individual Songs/$artist - $title
+    # Beets extra/other album types
+    albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{} %if{$hasyear, ($year)} $alb_type $alb_status $media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks, $track_alt, $track}. $title
+    albumtype:audiobook: Audiobooks/$albumartist/$album%aunique{} %if{$hasyear, ($year)} $media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks, $track_alt, $track}. $title
+    albumtype:other: Other/%upper{%left{{$albumartist_sort,1}}/$albumartist/%if{$hasyear, ($year)} $album%aunique{} $alb_type $alb_status $media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks, $track_alt, $track}. $title
 
-bucket:
-    # TODO: Deal with Various Artists/Various Artists/ Problem
-    bucket_alpha:
-    - '#-!'
-    - '0-9'
-    - 'A'
-    - 'B'
-    - 'C'
-    - 'D'
-    - 'E'
-    - 'F'
-    - 'G'
-    - 'H'
-    - 'I'
-    - 'J'
-    - 'K'
-    - 'L'
-    - 'M'
-    - 'N'
-    - 'O'
-    - 'P'
-    - 'Q'
-    - 'R'
-    - 'S'
-    - 'T'
-    - 'U'
-    # - 'Various Artists'
-    - 'V'
-    - 'W'
-    - 'X'
-    - 'Y'
-    - 'Z'
-    bucket_alpha_regex:
-        '#-!': ^[^0-9a-zA-Z]
-    bucket_year: []
-    extrapolate: no
+# Inline replacements used in path formatting
+#
+# Note: You may need to add a 'u' in-front of text to signify unicode in python 2
+# Unicode is default in python 3 so its not needed
+# TODO:
+# - Note if Reissue/Remaster
+# - Check Beets Padding issue for tracks and multidisc releases https://github.com/beetbox/beets/issues/3352
+# - Borrow ideas from this config https://gist.github.com/RollingStar/86e041338df295afbbf77a9027903068
 
-# Plugin Configurations
+album_fields:
+    alb_status: |
+        # MB returns 4 values describing how "offical" a release is, they are:
+        # Official, Promotional, Bootleg, and Pseudo-Release
+        # We only note the middle two.
+        # https://musicbrainz.org/doc/Release#Status
+        if 'Promo' in albumstatus:
+            return '[Promo]'
+        elif 'Bootleg' in albumstatus:
+            return '[Bootleg]'
+        else:
+            return ''
+
+    # Check if https://github.com/beetbox/beets/issues/2200 affects below
+    alb_type: |
+        albumtypes_list = {
+            'ep': 'EP',
+            'single': 'Single',
+            'live': 'Live',
+            'remix': 'Remix',
+            'dj-mix': 'DJ-mix',
+            'mixtape/street': 'Mixtape⧸Street',
+        }
+        for key, value in albumtypes_list.items():
+            if albumtype == key:
+                alb_type += "[" + str(value) + "] "
+        if alb_type is not None:
+            return alb_type.strip()
+        else:
+            return ""
+
+    media_type: |
+        # https://musicbrainz.org/doc/Release/Format
+        # Lets Merge the variations of the same medium into the main medium name (Opinonated)
+        media_list = {
+            '12" Vinyl': 'Vinyl',
+            '10" Vinyl': 'Vinyl',
+            '7" Vinyl': 'Vinyl',
+            'Cassette': 'Cassette',
+        }
+        # Lets omit these instead of converging them under a similar label like above (Opinonated)
+        media_types_to_omit = snake_oil_formats + ['CD', 'CD-R', 'Enhanced CD', 'CDDA', 'Blu-spec CD', 'SHM-CD', 'HQCD', '']
+        if media in media_list:
+            return "[" + str(media) + "]"
+        elif media in media_types_to_omit:
+            return ""
+        else:
+            return "[" + str(media) + "]"
+
+    hasyear: 1 if year > 0 else 0
+    multidisc: 1 if disctotal > 1 else 0
+
+item_fields:
+    alt_tracks: 1 if media in ['12" Vinyl', '10" Vinyl', '7" Vinyl', 'Vinyl', 'Cassette'] else 0
+
+# Plugin and Misc Configurations
 
 # Beets will remove empty directory after import if these are the only things left in it
-# Currently isn't used in here by default because we copy instead of move files
+# Currently isn't used in here by default, this is because we copy instead of move files
 clutter: ["Thumbs.DB", ".DS_Store", "*.m3u", "*.m3u8", "*.sfv"]
     
 fetchart:
     store_source: yes
 
 embedart:
-    # I dont want album art auto-embedded
+    # No auto-embedded album art
     auto: no
 
 convert:
     # auto: yes
     copy_album_art: yes
-    album_art_maxwidth: 600
+    album_art_maxwidth: 1080
     dest: ~/Audio/Music [Mobile version]/
     embed: yes
     never_convert_lossy_files: yes
@@ -141,7 +167,6 @@ convert:
         opus:
             command: ffmpeg -i $source -y -vn -acodec libopus -ab 128k $dest
             extension: opus
-
             # extension opus.ogg
             # Above is to work around android media scanner, opus is included 
             # in the file extension for making it easier on me in the future
@@ -165,16 +190,6 @@ extrafiles:
 
 lastgenre:
     count: 5
-
-item_fields:
-    multidisc: 1 if disctotal > 1 else 0
-    vinylorcassette: 1 if media in ['12" Vinyl', '7" Vinyl', 'Vinyl', 'Cassette'] else 0
-    vinyl: u'[Vinyl]' if media in ['12" Vinyl', '7" Vinyl', 'Vinyl'] else ''
-    cassette: u'[Cassette]' if media in ['Cassette'] else ''
-    bootleg: u'[Bootleg]' if albumstatus in ['Bootleg'] else ''
-    ep: u'[EP]' if albumtype == 'ep' else ''
-    single: u'[Single]' if albumtype == 'single' else ''
-    live: u'[Live]' if albumtype == 'live' else ''
 
 play:
     command: /usr/bin/mpv
