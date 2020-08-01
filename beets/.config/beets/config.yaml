@@ -64,15 +64,18 @@ match:
 # Done in order listed. Default is special and will always go at the end.
 # e.g. If I had an album with the albumtype $soundtrack and $compilation
 # Then the path that matchs first takes precedence.
+#
+# Notes: $track zero padding seems to disappear if put inside an if statement, currently tracking in
+# https://github.com/beetbox/beets/issues/3709
 paths: 
     # Beets inbuilt paths
-    default: Music/%upper{%left{{$albumartist_sort,1}}/$albumartist/%if{$hasyear, ($year)} $album%aunique{} $alb_type $alb_status $media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks, $track_alt, $track}. $title
-    comp: Music/Various Artists/$album%aunique{} %if{$hasyear, ($year)} $alb_type $alb_status $media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks, $track_alt, $track}. $title
+    default: Music/%upper{%left{$albumartist_sort,1}}/$albumartist/%if{$hasyear,($year)} $album%aunique{} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks,$track_alt,$track}. $title
+    comp: Music/Various Artists/$album%aunique{} %if{$hasyear,($year)} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks,$track_alt,$track}. $title
     singleton: Music/Individual Songs/$artist - $title
     # Beets extra/other album types
-    albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{} %if{$hasyear, ($year)} $alb_type $alb_status $media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks, $track_alt, $track}. $title
-    albumtype:audiobook: Audiobooks/$albumartist/$album%aunique{} %if{$hasyear, ($year)} $media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks, $track_alt, $track}. $title
-    albumtype:other: Other/%upper{%left{{$albumartist_sort,1}}/$albumartist/%if{$hasyear, ($year)} $album%aunique{} $alb_type $alb_status $media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks, $track_alt, $track}. $title
+    albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{} %if{$hasyear,($year)} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks,$track_alt,$track}. $title
+    albumtype:audiobook: Audiobooks/$albumartist/$album%aunique{} %if{$hasyear,($year)} $media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks,$track_alt,$track}. $title
+    albumtype:other: Other/%upperi{%left{$albumartist_sort,1}}/$albumartist/%if{$hasyear,($year)} $album%aunique{} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks,$track_alt,$track}. $title
 
 # Inline replacements used in path formatting
 #
@@ -96,8 +99,7 @@ album_fields:
         elif 'Bootleg' in albumstatus:
             return '[Bootleg]'
         else:
-            return ''
-
+            return None
     # Check if https://github.com/beetbox/beets/issues/2200 affects below
     alb_type: |
         alb_types = None
@@ -111,11 +113,11 @@ album_fields:
         }
         for key, value in albumtypes_list.items():
             if albumtype == key:
-                alb_types += "[" + str(value) + "] "
+                alb_types += "[" + str(value) + "]"
         if alb_types is not None:
             return alb_types.strip()
         else:
-            return ""
+            return None
 
     media_type: |
         # https://musicbrainz.org/doc/Release/Format
@@ -125,15 +127,16 @@ album_fields:
             '10" Vinyl': 'Vinyl',
             '7" Vinyl': 'Vinyl',
             'Cassette': 'Cassette',
+            'Digital Media': 'Digital Release',
         }
         # Lets omit these instead of converging them under a similar label like above (Opinonated)
         media_types_to_omit = ['CD', 'CD-R', 'Enhanced CD', 'CDDA', 'Blu-spec CD', 'SHM-CD', 'HQCD', '']
-        if media in media_list:
-            return "[" + str(media) + "]"
-        elif media in media_types_to_omit:
-            return ""
+        if items[0].media in media_list:
+            return "[" + str(media_list[items[0].media]) + "]"
+        elif items[0].media in media_types_to_omit:
+            return None
         else:
-            return "[" + str(media) + "]"
+            return "[" + str(items[0].media) + "]"
 
     hasyear: 1 if year > 0 else 0
     multidisc: 1 if disctotal > 1 else 0
