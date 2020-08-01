@@ -17,7 +17,6 @@ plugins:
     - lastgenre
     - mbsync
     # Path Format Plugins
-    - bucket
     - inline
     # Interoperability
     - badfiles
@@ -83,6 +82,8 @@ paths:
 # - Note if Reissue/Remaster
 # - Check Beets Padding issue for tracks and multidisc releases https://github.com/beetbox/beets/issues/3352
 # - Borrow ideas from this config https://gist.github.com/RollingStar/86e041338df295afbbf77a9027903068
+# - Split Anime/Game genre soundtracks out of the OST path using genre:game etc
+# - Classic genre which is sorted by composer
 
 album_fields:
     alb_status: |
@@ -99,6 +100,7 @@ album_fields:
 
     # Check if https://github.com/beetbox/beets/issues/2200 affects below
     alb_type: |
+        alb_types = None
         albumtypes_list = {
             'ep': 'EP',
             'single': 'Single',
@@ -109,9 +111,9 @@ album_fields:
         }
         for key, value in albumtypes_list.items():
             if albumtype == key:
-                alb_type += "[" + str(value) + "] "
-        if alb_type is not None:
-            return alb_type.strip()
+                alb_types += "[" + str(value) + "] "
+        if alb_types is not None:
+            return alb_types.strip()
         else:
             return ""
 
@@ -125,7 +127,7 @@ album_fields:
             'Cassette': 'Cassette',
         }
         # Lets omit these instead of converging them under a similar label like above (Opinonated)
-        media_types_to_omit = snake_oil_formats + ['CD', 'CD-R', 'Enhanced CD', 'CDDA', 'Blu-spec CD', 'SHM-CD', 'HQCD', '']
+        media_types_to_omit = ['CD', 'CD-R', 'Enhanced CD', 'CDDA', 'Blu-spec CD', 'SHM-CD', 'HQCD', '']
         if media in media_list:
             return "[" + str(media) + "]"
         elif media in media_types_to_omit:
