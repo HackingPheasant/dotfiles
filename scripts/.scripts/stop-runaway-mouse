@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# For some unknown reason to me, the mouse cursor goes on the fritz
+# I am sometimes in a position where I cant reboot to mitigate this
+# problem, so I will just disable the touchpad
+# Happens on ThinkPad e580
+# I really should debug the actual cause of the issue and fix it
+xinput disable 12
