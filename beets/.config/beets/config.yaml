@@ -64,18 +64,15 @@ match:
 # Done in order listed. Default is special and will always go at the end.
 # e.g. If I had an album with the albumtype $soundtrack and $compilation
 # Then the path that matchs first takes precedence.
-#
-# Notes: $track zero padding seems to disappear if put inside an if statement, currently tracking in
-# https://github.com/beetbox/beets/issues/3709
 paths: 
     # Beets inbuilt paths
-    default: Music/%upper{%left{$albumartist_sort,1}}/$albumartist/%if{$hasyear,($year)} $album%aunique{} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks,$track_alt,$track}. $title
-    comp: Music/Various Artists/$album%aunique{} %if{$hasyear,($year)} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks,$track_alt,$track}. $title
+    default: Music/%upper{%left{$albumartist_sort,1}}/$albumartist/%if{$hasyear,($year)} $album%aunique{} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
+    comp: Music/Various Artists/$album%aunique{} %if{$hasyear,($year)} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
     singleton: Music/Individual Songs/$artist - $title
     # Beets extra/other album types
-    albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{} %if{$hasyear,($year)} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks,$track_alt,$track}. $title
-    albumtype:audiobook: Audiobooks/$albumartist/$album%aunique{} %if{$hasyear,($year)} $media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks,$track_alt,$track}. $title
-    albumtype:other: Other/%upperi{%left{$albumartist_sort,1}}/$albumartist/%if{$hasyear,($year)} $album%aunique{} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{alt_tracks,$track_alt,$track}. $title
+    albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{} %if{$hasyear,($year)} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
+    albumtype:audiobook: Audiobooks/$albumartist/$album%aunique{} %if{$hasyear,($year)} $media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
+    albumtype:other: Other/%upper{%left{$albumartist_sort,1}}/$albumartist/%if{$hasyear,($year)} $album%aunique{} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
 
 # Inline replacements used in path formatting
 #
