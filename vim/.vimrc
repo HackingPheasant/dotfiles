@@ -87,6 +87,26 @@ cnoremap w!! w !sudo tee > /dev/null %
 " dialogue asking if you wish to save changed files.
 set confirm
 
+" Protect changes between writes. Default values of updatecount (200 
+" keystrokes) and updatetime (4 seconds) are fine
+set swapfile
+set directory^=~/.vim/swap//
+
+" Protect against crash-during-write but do not persist backup after 
+" successful write
+set writebackup
+set nobackup
+set backupcopy=auto      " Use rename-and-write-new method whenever safe
+if has("patch-8.1.0251") " Patch required to honor double slash at end
+	" Consolidate the writebackups -- not a big deal either way, 
+        " since they usually get deleted
+	set backupdir^=~/.vim/backup//
+end
+
+" Persist the undo tree for each file
+set undofile
+set undodir^=~/.vim/undo//
+
 set history=200		" keep 200 lines of command line history
 set wildmenu		" display completion matches in a status line
 set wildignore+=*~,*.o,*.obj,.git,*.rbc,*.class,.svn,vendor/gems/*,*.bak,*.exe,target,tags,.tags,*/.git/*
@@ -106,6 +126,9 @@ if has('langmap') && exists('+langremap')
   " compatible).
   set nolangremap
 endif
+
+" TODO: Probably break below into their seperate files and keep the vimrc for
+" applicable global config changes
 
 " Plugins
 
