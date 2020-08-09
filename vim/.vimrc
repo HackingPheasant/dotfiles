@@ -215,7 +215,7 @@ map <silent> <C-E> :call ToggleVExplorer()<CR>
 
 " TODO: Make these more flexible
 " F5 to compile
-nnoremap <silent> <F5> :<c-u>call LazyCompile()<cr><cr><cr>:<c-u>copen
+nnoremap <silent> <F5> :<c-u>call LazyCompile()<cr>
 " Ctrl+F5 to run compiled program
 nnoremap <silent> <C-F5> :<c-u>vertical term ./%<<cr>
 
