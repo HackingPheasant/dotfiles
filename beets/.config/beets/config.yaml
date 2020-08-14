@@ -65,12 +65,10 @@ match:
 # e.g. If I had an album with the albumtype $soundtrack and $compilation
 # Then the path that matchs first takes precedence.
 paths: 
-    # Beets inbuilt paths
     default: Music/%upper{%left{$albumartist_sort,1}}/$albumartist/%if{$hasyear,($year)} $album%aunique{} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
+    albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{} %if{$hasyear,($year)} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
     comp: Music/Various Artists/$album%aunique{} %if{$hasyear,($year)} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
     singleton: Music/Individual Songs/$artist - $title
-    # Beets extra/other album types
-    albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{} %if{$hasyear,($year)} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
     albumtype:audiobook: Audiobooks/$albumartist/$album%aunique{} %if{$hasyear,($year)} $media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
     albumtype:other: Other/%upper{%left{$albumartist_sort,1}}/$albumartist/%if{$hasyear,($year)} $album%aunique{} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
 
@@ -99,7 +97,7 @@ album_fields:
             return None
     # Check if https://github.com/beetbox/beets/issues/2200 affects below
     alb_type: |
-        alb_types = None
+        alb_types = ""
         albumtypes_list = {
             'ep': 'EP',
             'single': 'Single',
@@ -149,6 +147,7 @@ clutter: ["Thumbs.DB", ".DS_Store", "*.m3u", "*.m3u8", "*.sfv"]
     
 fetchart:
     store_source: yes
+    high_resolution: yes
 
 embedart:
     # No auto-embedded album art
