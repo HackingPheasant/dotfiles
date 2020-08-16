@@ -4,27 +4,25 @@ unalias -a
 
 # Use the enviroment variables, otherwise use the system
 # defaults, they are more likely to already be installed
-editor() { command ${EDITOR:-vi} "$@"; }
+editor() { command ${EDITOR:-nano} "$@"; }
 browser() { command ${BROWSER:-lynx} "$@"; }
-browsergui() { command ${BROWSER:-firefox} "$@"; }
 pager() { command ${PAGER:-more} "$@"; }
 
 count() { sort "$@" | uniq -c | sort -n -r | pager; }
-alias '*~'='rm *~'
 alias demo='PS1="\\n\\$ "'
 alias feh='feh --scale-down'
 alias gdb='gdb -q'
-alias gmpv='gnome-mpv'
 alias hd='hexdump -C'
 alias hex='xxd -p'
 alias unhex='xxd -p -r'
 alias httpdump="sudo tcpdump -i wlp5s0 -n -s 0 -w - | grep -a -o -E \"Host\\: .*|GET \\/.*\""
 alias init='telinit' # for systemd
-alias ls='ls --color=auto'
-alias l1='ls --color=auto -1'
-alias ll='ls --color=auto -l'
-alias la='ls --color=auto -a'
-alias lla='ls --color=auto -la'
+alias l1='ls -1'
+alias ll='ls -l'
+alias la='ls -a'
+alias lla='ls -la'
+alias lsd='ls -d */'
+alias lsh='ls -d .*'
 alias logoff='logout'
 if [[ $DESKTOP_SESSION ]]; then
 	alias logout='env logout'
@@ -36,8 +34,6 @@ alias py3='python3'
 rdu() { (( $# )) || set -- */; du -hsc "$@" | awk '$1 !~ /K/ || $2 == "total"' | sort -h; }
 alias sudo='sudo ' # for alias expansion in sudo args https://askubuntu.com/a/22043
 alias fuck='sudo !!'
-alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date' # Stopwatch
-alias treedu='tree --du -h'
 unfuckawesome() { echo 'awesome.restart()' | awesome-client; }
 alias unpickle='python -m pickletools'
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"' # URL-encode strings
@@ -54,11 +50,6 @@ alias mboxdate='date "+%a %b %_d %H:%M:%S %Y"'
 alias mimedate='date "+%a, %d %b %Y %H:%M:%S %z"' # RFC 2822
 alias isodate='date "+%Y-%m-%dT%H:%M:%S%z"' # ISO 8601
 
-# git bisect
-
-alias good='git bisect good'
-alias bad='git bisect bad'
-
 # IP addresses
 alias pubip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias localip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'"
@@ -69,6 +60,29 @@ alias ips="ifconfig -a | grep -o 'inet6\\? \\(addr:\\)\\?\\s\\?\\(\\(\\([0-9]\\+
 
 
 # OS-dependent aliases
+case $OSTYPE in
+	linux-gnu*|cygwin)
+                alias df='df -Th'
+		alias ls='ls --color=auto'
+		alias ip='ip --color=auto'
+                alias grep='grep --color=auto'
+                alias egrep='egrep --color=auto'
+                alias fgrep='fgrep --color=auto'
+		;;
+	freebsd*)
+		alias ls='ls -G'
+		alias df='df -h'
+		;;
+	gnu)
+		alias ls='ls --color=auto'
+		;;
+	netbsd|openbsd*)
+		alias df='df -h'
+		;;
+	*)
+		alias df='df -h'
+		;;
+esac
 
 # misc functions
 cat() {
