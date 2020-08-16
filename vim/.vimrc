@@ -190,7 +190,7 @@ function ToggleVExplorer()
         exe "bd".g:netrw_buffer | unlet g:netrw_buffer
     else
         Vexplore! | let g:netrw_buffer=bufnr("%")
-    endif
+    endiss
 endfunction
 
 function! LazyCompile()
@@ -211,7 +211,11 @@ endfunction
 nnoremap <F3> :<c-u>Termdebug <CR><c-w>2j<c-w>L<c-w>h
 
 " Toggle Vexplore with Ctrl-E
-map <silent> <C-E> :call ToggleVExplorer()<CR>
+" Includes a (shitty) guard to not add mapping on 
+" android devices
+if !exists('$ANDROID_ROOT')
+    map <silent> <C-E> :call ToggleVExplorer()<CR>
+endif
 
 " TODO: Make these more flexible
 " F5 to compile
