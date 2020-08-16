@@ -5,15 +5,21 @@
 # Then I just overwrite what I want changed.
 uname="$(uname -a)"
 
-# Android - if android then exit
-[[ "$uname" =~ Android ]] && return
-
-# Solus
-if [[ $(lsb_release -a) =~ Solus ]]; then
-        # Source solus stateless config
-        # the stateless concept - a strict separation between User and System files for easier OS manageability.
-        source /usr/share/defaults/etc/profile
-fi
+case $OSTYPE in
+    linux-android)
+        # Android - if android, then exit
+        ;;
+    linux-gnu*)
+        # Solus
+        if [[ $(lsb_release -a) =~ Solus ]]; then
+                # Source solus stateless config
+                # the stateless concept - a strict separation between User and System files for easier OS manageability.
+                source /usr/share/defaults/etc/profile
+        fi
+        ;;
+    *)
+        ;;
+esac
 
 have() { command -v "$1" >&/dev/null; }
 
