@@ -27,6 +27,7 @@ require("awful.hotkeys_popup.keys")
 
 -- User created library
 local helpers = require("helpers")
+-- require("module.lockscreen")
 
 -- Error handling
 --------------------------------------------------------------------------------
@@ -172,8 +173,8 @@ screen.connect_signal("request::desktop_decoration", function(s)
         buttons = {
             awful.button({ }, 1, function () awful.layout.inc( 1) end),
             awful.button({ }, 3, function () awful.layout.inc(-1) end),
-            awful.button({ }, 4, function () awful.layout.inc( 1) end),
-            awful.button({ }, 5, function () awful.layout.inc(-1) end),
+            awful.button({ }, 4, function () awful.layout.inc(-1) end),
+            awful.button({ }, 5, function () awful.layout.inc( 1) end),
         }
     }
 
@@ -381,6 +382,10 @@ awful.keyboard.append_global_keybindings({
               {description = "Increase Brightness", group = "Function Keys"}),
     awful.key({                   }, "XF86MonBrightnessDown", function () awful.util.spawn("xbacklight -dec 5%") end,
               {description = "Decrease Brightness", group = "Function Keys"})
+
+    -- lockscreen
+    -- awful.key({ ctrlkey           }, "l", function() awful.spawn("awesome-client '_G.show_lockscreen()'", false) end,
+    --          {description = "lock the screen", group = "Utility"})
 })
 
 awful.keyboard.append_global_keybindings({
@@ -435,6 +440,18 @@ awful.keyboard.append_global_keybindings({
                 if tag then
                     client.focus:toggle_tag(tag)
                 end
+            end
+        end,
+    }, 
+    awful.key {
+        modifiers   = { modkey },
+        keygroup    = "numpad",
+        description = "select layout directly",
+        group       = "layout",
+        on_press    = function (index)
+            local t = awful.screen.focused().selected_tag
+            if t then
+                t.layout = t.layouts[index] or t.layout
             end
         end,
     }
@@ -583,7 +600,7 @@ ruled.client.connect_signal("request::rules", function()
     -- Ghidra always on tag 9
     ruled.client.append_rule {
         rule       = { class = "Ghidra" },
-        properties = { tag = "9"        }
+        properties = { tag = "8"        }
     }
 end)
 
