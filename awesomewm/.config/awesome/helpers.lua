@@ -9,6 +9,8 @@ local wibox = require("wibox")
 
 local naughty = require("naughty")
 
+local common = require("common")
+
 local helpers = {}
 
 
@@ -22,7 +24,7 @@ local helpers = {}
 function helpers.screenshot(action, delay)
     local cmd
     local timestamp = os.date("'%Y-%m-%d %H-%M-%S'")
-    local filename = screenshot_dir.."'Screenshot from '"..timestamp..".png"
+    local filename = common.screenshot_dir.."'Screenshot from '"..timestamp..".png"
     local maim_args = "-u -b 3 -m 5"
     -- local icon = icons.screenshot
 

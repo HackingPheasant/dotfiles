@@ -33,20 +33,20 @@ awful.keyboard.append_global_keybindings({
 
     -- sound
     -- TODO: Move everything below this comment into helper/dedicated file
-    awful.key({                   }, "XF86AudioMute", function () awful.util.spawn("amixer sset Master toggle") end,
+    awful.key({                   }, "XF86AudioMute", function () awful.spawn("amixer sset Master toggle") end,
               {description = "Toggle Sound", group = "Function Keys"}),
-    awful.key({                   }, "XF86AudioRaiseVolume", function () awful.util.spawn("amixer sset Master 5%+") end,
+    awful.key({                   }, "XF86AudioRaiseVolume", function() awful.spawn("amixer sset Master 5%+") end,
               {description = "Raise Volume", group = "Function Keys"}),
-    awful.key({                   }, "XF86AudioLowerVolume", function () awful.util.spawn("amixer sset Master 5%-") end,
+    awful.key({                   }, "XF86AudioLowerVolume", function() awful.spawn("amixer sset Master 5%-") end,
               {description = "Lower Volume", group = "Function Keys"}),
     
     -- brightness
     -- xbacklight currently doesnt work on my laptop
     -- No outputs have backlight property
     -- TODO: FIX IT
-    awful.key({                   }, "XF86MonBrightnessUp", function () awful.util.spawn("xbacklight -inc 5%") end,
+    awful.key({                   }, "XF86MonBrightnessUp", function () awful.spawn("xbacklight -inc 5%") end,
               {description = "Increase Brightness", group = "Function Keys"}),
-    awful.key({                   }, "XF86MonBrightnessDown", function () awful.util.spawn("xbacklight -dec 5%") end,
+    awful.key({                   }, "XF86MonBrightnessDown", function () awful.spawn("xbacklight -dec 5%") end,
               {description = "Decrease Brightness", group = "Function Keys"})
 
     -- lockscreen
