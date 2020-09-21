@@ -11,7 +11,7 @@ local naughty = require("naughty")
 
 local common = require("common")
 
-local helpers = {}
+local screenshot = {}
 
 
 -- Screenshots
@@ -21,7 +21,7 @@ local helpers = {}
 -- notification action buttons
 -- grab current window via awesome, so one less external dependency
 -- sort out my icon situation
-function helpers.screenshot(action, delay)
+function screenshot.action(action, delay)
     local cmd
     local timestamp = os.date("'%Y-%m-%d %H-%M-%S'")
     local filename = common.screenshot_dir.."'Screenshot from '"..timestamp..".png"
@@ -73,4 +73,4 @@ function helpers.screenshot(action, delay)
 
 end
 
-return helpers
+return screenshot
