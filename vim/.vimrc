@@ -185,7 +185,7 @@ let g:netrw_browse_split = 3
 let g:netrw_list_hide = "\.[oa]$"
 
 " Custom Functions
-function ToggleVExplorer()
+function! ToggleVExplorer()
     if exists("g:netrw_buffer") && bufexists(g:netrw_buffer)
         exe "bd".g:netrw_buffer | unlet g:netrw_buffer
     else
@@ -203,8 +203,25 @@ function! LazyCompile()
     end
 endfunction
 
+" function that kills trailing whitespaces
+function! RemoveTrailing()
+    " save the cursor position
+    let l:save_cursor = getpos('.')
+    " find replace all trailing spaces to end of line
+    %s/\s\+$//e
+    " reset cursor position
+    call setpos('.', l:save_cursor)
+endfunction
+
+:function! Formatonsave()
+  let l:formatdiff = 1
+  pyf clang-format.py
+endfunction
+
 " Custom Commands
 " Note: Use <c-u> after : to clear the command line.
+" Remove trailing spaces when you write a file
+" autocmd BufWritePre * :call RemoveTrailing()
 
 " TODO: Add command to close windows all at once
 " F3 opens termdebug with specific layout
