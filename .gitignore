@@ -1,6 +1,7 @@
 deadbeef/.config/deadbeef/dspconfig
 deadbeef/.config/deadbeef/playlists/*
 beets/.config/beets/state.pickle
+mpv/.config/mpv/watch_later/
 vim/.vim/spell/en.utf-8.add.spl
 vim/.vim/swap/*
 vim/.vim/undo/*
