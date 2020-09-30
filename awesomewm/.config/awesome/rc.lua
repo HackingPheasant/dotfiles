@@ -29,7 +29,7 @@ end)
 
 -- Enviroment/Variable definitions and Theme Setup
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init(gears.filesystem.get_configuration_dir() .. "theme.lua")
+beautiful.init(gears.filesystem.get_configuration_dir() .. "theme_skeleton.lua")
 
 local common = require("common")
 common.init {
@@ -50,6 +50,7 @@ require("widgets.taglist")          -- Left
 require("widgets.promptbox")        -- Left
 require("widgets.tasklist")         -- Middle
 require("widgets.keyboardlayout")   -- Right
+-- require("widgets.battery_bar")     -- Right
 require("widgets.systray")          -- Right
 require("widgets.textclock")        -- Right
 require("widgets.layoutbox")        -- Right
