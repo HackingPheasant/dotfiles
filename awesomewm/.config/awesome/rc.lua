@@ -29,14 +29,7 @@ end)
 
 -- Enviroment/Variable definitions and Theme Setup
 -- Themes define colours, icons, font and wallpapers.
-local themes = {
-    "geometric",        -- 1 --
-}
-
--- Change this number to use a different theme
-local chosen_theme = themes[1]
-local theme_dir = os.getenv("HOME") .. "/.config/awesome/themes/"
-beautiful.init( theme_dir .. chosen_theme .. "/theme.lua" )
+beautiful.init(gears.filesystem.get_configuration_dir() .. "theme.lua")
 
 local common = require("common")
 common.init {
