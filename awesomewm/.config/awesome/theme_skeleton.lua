@@ -18,7 +18,7 @@ local gfs = require("gears.filesystem")
 local themes_path = gfs.get_themes_dir()
 
 -- Choose preferred theme (name after the dot) from theme_definitions
-local th_def = require('theme_definitions').nord
+th_def = require('theme_definitions').nord
 
 local theme = {}
 
