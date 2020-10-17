@@ -37,6 +37,7 @@ alias fuck='sudo !!'
 unfuckawesome() { echo 'awesome.restart()' | awesome-client; }
 alias unpickle='python -m pickletools'
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"' # URL-encode strings
+alias fixperms='chmod -R a=r,u+w,a+x'   #0755 for dir, 0644 for file. https://stackoverflow.com/a/41331598 This is useful especially when copying from NTFS partition to something more linux like. Gets stuff to conform to everything else permission wise (all other perms by default get set by umask 022)
 
 # dates
 alias cal='cal -m'
