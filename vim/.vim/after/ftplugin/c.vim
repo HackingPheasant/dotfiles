@@ -6,7 +6,7 @@ setlocal foldmethod=syntax
 setlocal foldlevel=10
 
 " set clang-format as auto-formatting tool
-setlocal equalprg=clang-format
+setlocal equalprg=clang-format\ --style=file
 
 setlocal path=.,,*/include/**2,./*/include/**2
 " setlocal path+=/usr/include/**4,/usr/local/include/**3

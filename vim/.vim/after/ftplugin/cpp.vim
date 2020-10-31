@@ -6,7 +6,7 @@ setlocal foldmethod=syntax
 setlocal foldlevel=10
 
 " set clang-format as auto-formatting tool
-setlocal equalprg=clang-format
+setlocal equalprg=clang-format\ --style=file
 " Example Usage:
 "   Format a whole file can be done like so
 "   :gg=G
