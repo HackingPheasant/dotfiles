@@ -5,6 +5,9 @@ setlocal cindent
 setlocal foldmethod=syntax
 setlocal foldlevel=10
 
+" set clang-format as auto-formatting tool
+setlocal equalprg=clang-format
+
 setlocal path=.,,*/include/**2,./*/include/**2
 " setlocal path+=/usr/include/**4,/usr/local/include/**3
 " Disabled 2nd onw for the time being as it took to long
