@@ -11,6 +11,7 @@ pager() { command ${PAGER:-more} "$@"; }
 count() { sort "$@" | uniq -c | sort -n -r | pager; }
 alias demo='PS1="\\n\\$ "'
 alias feh='feh --scale-down'
+alias fixperms='chmod -R a=r,u+w,a+x'   #0755 for dir, 0644 for file. https://stackoverflow.com/a/41331598 This is useful especially when copying from NTFS partition to something more linux like. Gets stuff to conform to everything else permission wise (all other perms by default get set by umask 022)
 alias gdb='gdb -q'
 alias hd='hexdump -C'
 alias hex='xxd -p'
@@ -33,11 +34,10 @@ alias py2='python2'
 alias py3='python3'
 rdu() { (( $# )) || set -- */; du -hsc "$@" | awk '$1 !~ /K/ || $2 == "total"' | sort -h; }
 alias sudo='sudo ' # for alias expansion in sudo args https://askubuntu.com/a/22043
-alias fuck='sudo !!'
 unfuckawesome() { echo 'awesome.restart()' | awesome-client; }
 alias unpickle='python -m pickletools'
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"' # URL-encode strings
-alias fixperms='chmod -R a=r,u+w,a+x'   #0755 for dir, 0644 for file. https://stackoverflow.com/a/41331598 This is useful especially when copying from NTFS partition to something more linux like. Gets stuff to conform to everything else permission wise (all other perms by default get set by umask 022)
+alias vip='vim -p'
 
 # dates
 alias cal='cal -m'
@@ -95,17 +95,10 @@ cat() {
 }
 
 ytdl() { $HOME/.scripts/youtube-dl/ytdl.sh "$@"; }
-bwfzf() { $HOME/.scripts/bwfzf/bwfzf; }
-ns-cart() {
-    CRC=$(crc32 "$1")  
-    curl "https://datomatic.nointro.org/qchknsw.php?f=cart&crc="$CRC 
-    echo
-}
 
 # package management
 
 # service management
-
 if have systemctl && [[ -d /run/systemd/system ]]; then
 	start()   { sudo systemctl start "$@";   _status "$@"; }
 	stop()    { sudo systemctl stop "$@";    _status "$@"; }
