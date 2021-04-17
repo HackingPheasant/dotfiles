@@ -14,8 +14,6 @@ sudo luarocks install busted
 # build awesome
 git clone https://github.com/awesomeWM/awesome.git
 cd awesome
-mkdir -p build
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONFDIR=/etc
-make
+cmake . -B build -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONFDIR=/etc
+cmake --build build/
 sudo make install
