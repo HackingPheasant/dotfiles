@@ -59,7 +59,7 @@ if has('guicolors')
   set guicolors
 endif
 
-" Preferred colorscheme that ships with vim
+" Preferred colorscheme, it ships with vim
 colorscheme ron
 
 set ruler		" show the cursor position all the time
@@ -85,15 +85,6 @@ set softtabstop=4
 set shiftwidth=4
 set expandtab
 
-" Convenient command to see the difference between the current buffer and the
-" file it was loaded from, thus the changes you made.
-" Only define it when not defined already.
-" Revert with: ":delcommand DiffOrig".
-if !exists(":DiffOrig")
-  command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
-		  \ | wincmd p | diffthis
-endif
-
 " use a more readable diff algorithm
 if has("patch-8.1.0360")
 	set diffopt+=internal,algorithm:patience
@@ -102,8 +93,6 @@ endif
 set ttimeout		" time out for key codes
 set ttimeoutlen=100	" wait up to 100ms after Esc for special key
 
-" Force saving files that require root permission 
-cnoremap w!! w !sudo tee > /dev/null %
 
 " Instead of failing a command because of unsaved changes, instead raise a
 " dialogue asking if you wish to save changed files.
@@ -152,8 +141,8 @@ if has('langmap') && exists('+langremap')
   set nolangremap
 endif
 
-" TODO: Probably break below into their separate files and keep the vimrc for
-" applicable global config changes
+" TODO: Probably break below into their independent filetype files and keep the
+" vimrc for applicable global config changes
 
 " Spell check the following files/filetypes
 autocmd BufRead,BufNewFile *.md setlocal spell spelllang=en
@@ -169,12 +158,6 @@ endif
 " Plugin Settings
 
 " netrw (filebrowser) settings
-" netrw plugin ships with vim, and its good enough
-" Open it in any of the following ways (can also use shorthand, e.g :Sex
-" :Explore - opens netrw in the current window
-" :Sexplore - opens netrw in a horizontal split
-" :Vexplore - opens netrw in a vertical split
-"
 " Set default view to long listing
 let g:netrw_liststyle = 1
 " Set the filesize show in human-readable (uses 1024 base)
@@ -184,60 +167,10 @@ let g:netrw_browse_split = 3
 " don't show object files
 let g:netrw_list_hide = "\.[oa]$"
 
-" Custom Functions
-function! ToggleVExplorer()
-    if exists("g:netrw_buffer") && bufexists(g:netrw_buffer)
-        exe "bd".g:netrw_buffer | unlet g:netrw_buffer
-    else
-        Vexplore! | let g:netrw_buffer=bufnr("%")
-    endiss
-endfunction
+" Custom key remaps
 
-function! LazyCompile()
-    if filereadable("./CMakeLists.txt")
-        !cmake --build build/
-    elseif filereadable("./Makefile")
-        make
-    else
-        make %<
-    end
-endfunction
+" Force saving files that require root permission 
+cnoremap w!! w !sudo tee > /dev/null %
 
-" function that kills trailing whitespaces
-function! RemoveTrailing()
-    " save the cursor position
-    let l:save_cursor = getpos('.')
-    " find replace all trailing spaces to end of line
-    %s/\s\+$//e
-    " reset cursor position
-    call setpos('.', l:save_cursor)
-endfunction
-
-:function! Formatonsave()
-  let l:formatdiff = 1
-  pyf clang-format.py
-endfunction
-
-" Custom Commands
-" Note: Use <c-u> after : to clear the command line.
-" Remove trailing spaces when you write a file
-" autocmd BufWritePre * :call RemoveTrailing()
-
-" TODO: Add command to close windows all at once
-" F3 opens termdebug with specific layout
-nnoremap <F3> :<c-u>Termdebug <CR><c-w>2j<c-w>L<c-w>h
-
-" Toggle Vexplore with Ctrl-E
-" Includes a (shitty) guard to not add mapping on 
-" android devices
-if !exists('$ANDROID_ROOT')
-    map <silent> <C-E> :call ToggleVExplorer()<CR>
-endif
-
-" TODO: Make these more flexible
-" F5 to compile
-nnoremap <silent> <F5> :<c-u>call LazyCompile()<cr>
-" Ctrl+F5 to run compiled program
-nnoremap <silent> <C-F5> :<c-u>vertical term ./%<<cr>
-
+" Auto add end curly bracket
 inoremap {<Enter> {<Enter>}<Esc>O
