@@ -49,9 +49,9 @@ awful.widget.watch("acpi --ac-adapter", update_interval, function(widget, stdout
     -- Adapter 0: off-line 
     for line in stdout:gmatch("[^\r\n]+") do
         if line:match("on%-?line") then
-            ac_status = true; -- True, Charger plugged in
+            ac_status = 1; -- True, Charger plugged in
         else
-            ac_status = false; -- False, Charger not plugged in
+            ac_status = 0; -- False, Charger not plugged in
         end
 
     end
