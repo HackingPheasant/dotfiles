@@ -19,6 +19,7 @@ alias unhex='xxd -p -r'
 alias httpdump="sudo tcpdump -i wlp5s0 -n -s 0 -w - | grep -a -o -E \"Host\\: .*|GET \\/.*\""
 alias init='telinit' # for systemd
 alias ld_trace='LD_TRACE_LOADED_OBJECTS=1 '
+alias ld_auxv_info='LD_SHOW_AUXV=1 '
 alias l1='ls -1'
 alias ll='ls -l'
 alias la='ls -a'
