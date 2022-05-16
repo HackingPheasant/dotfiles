@@ -1,5 +1,6 @@
 ## Beets Configuration file.
 ## ~./config/beets/config.yaml
+## Last Updated: 2020-08-14
 
 # Define directorty for music and beets db
 library: ~/Audio/.musiclibrary.db
@@ -10,19 +11,20 @@ plugins:
     # Autotagger Extensions
     - fromfilename
     # Metadata Plugins
+    - acousticbrainz
+    - absubmit
     - edit
     - fetchart
     - embedart
-    - ftintitle
     - lastgenre
     - mbsync
+    - mbsubmit
     # Path Format Plugins
     - inline
     # Interoperability
-    - badfiles
+    - check
     - play
     # Miscellaneous Plugins
-    - audit
     - convert
     - duplicates
     - export
@@ -46,6 +48,7 @@ import:
     move: no
     resume: ask
     incremental: yes
+    timid: yes
     quiet_fallback: skip
     log: ~/Audio/.beet.log
     bell: yes
@@ -54,23 +57,35 @@ import:
 per_disc_numbering: true
 
 aunique:
-    # Drop some disambiguation fallbacks
-    disambuguators: media mastering label catalognum albumdisambig releasegroupdisambig
+    # Drop some disambiguation fallbacks as they are already used in the path
+    disambuguators: mastering label catalognum albumdisambig releasegroupdisambig
 
 match:
     preferred:
         media: ['Vinyl', 'CD', 'Digital Media|File']
 
+replace:
+    '[\\/]': ∕          # Replace with DIVISION SLASH (U+2215)
+    '^\.': _            # If text starts with \, replace with underscore
+    '[\x00-\x1f]': _    # Remove ASCII control characters (0 to 31 on ascii table)
+    '[<>:"\?\*\|]': _   # Removes the Windows “reserved characters”
+    '\.$': _            # If text ends with \, replace with underscore
+    '\s+$': ''          # If text ends with a space, remove space
+    '^\s+': ''          # If text starts with a space, remove space
+    '^-': _             # If text starts with -, replace with underscore
+    '[\?]': ？          # Replace with FULLWIDTH QUESTION MARK (U+FF1F)
+    '[\.]{3}$': …       # Replace 3 dots at end of text with special ellipis charcter
+
+
 # Done in order listed. Default is special and will always go at the end.
 # e.g. If I had an album with the albumtype $soundtrack and $compilation
 # Then the path that matchs first takes precedence.
 paths: 
-    default: Music/%upper{%left{$albumartist_sort,1}}/$albumartist/%if{$hasyear,($year)} $album%aunique{} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
-    albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{} %if{$hasyear,($year)} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
-    comp: Music/Various Artists/$album%aunique{} %if{$hasyear,($year)} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
+    default: Music/$artist_initial/$alb_artist/%if{$hasyear,($year)} $album%aunique{}%if{alb_type, $alb_type}%if{$alb_status, $alb_status}%if{$media_type, $media_type}/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
+    albumtype:soundtrack: Music/Original Sound Tracks (OST)/$album%aunique{}%if{$hasyear, ($year)}%if{alb_type, $alb_type}%if{$alb_status, $alb_status}%if{$media_type, $media_type}/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $artist - $title
+    comp: Music/Various Artists/$album%aunique{} %if{$hasyear,($year)}%if{alb_type, $alb_type}%if{$alb_status, $alb_status}%if{$media_type, $media_type}/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $artist - $title
     singleton: Music/Individual Songs/$artist - $title
-    albumtype:audiobook: Audiobooks/$albumartist/$album%aunique{} %if{$hasyear,($year)} $media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
-    albumtype:other: Other/%upper{%left{$albumartist_sort,1}}/$albumartist/%if{$hasyear,($year)} $album%aunique{} $alb_type$alb_status$media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
+    albumtype:audiobook: Audiobooks/$alb_artist/$album%aunique{}%if{$hasyear, ($year)} $media_type/%if{$multidisc,Disc $disc/}%if{$alt_tracks,$track_alt,$track}. $title
 
 # Inline replacements used in path formatting
 #
@@ -84,6 +99,35 @@ paths:
 # - Classic genre which is sorted by composer
 
 album_fields:
+    # artist_initial: albumartist[0].upper()
+    #TODO - use albumartist_sort then drop back to albumartist if former is empty
+    artist_initial: |
+      import re
+      if re.match("[0-9]", albumartist[0]):
+        return "0-9"
+      #elif albumartist_sort:
+        #return albumartist_sort[0].upper()
+      else:
+        return albumartist[0].upper()
+
+    alb_artist: |
+      # .isascii() is a Python 3.7+ Feature
+      if ((albumartist.isascii()) == False and albumartist_sort):
+          # Redumentary Foreign name detection
+          return albumartist_sort + " (" + albumartist + ")"
+      else:
+          return albumartist
+
+    alb_extra_info: |
+        # Doing it in one inline function instead of seperate to handle all the
+        # extra spaces or lack of spaces the previous setup caused
+        # [alb_type] [alb_status] [media_type]
+        #alb_extras = alb_type() + ' ' + alb_status() + ' ' + media_type()
+        # Remove all the extra spaces
+        #while "  " in alb_extras:
+        #  alb_extras = alb_extras.replace("  ", " ")
+        #return alb_extras
+
     alb_status: |
         # MB returns 4 values describing how "offical" a release is, they are:
         # Official, Promotional, Bootleg, and Pseudo-Release
@@ -95,6 +139,7 @@ album_fields:
             return '[Bootleg]'
         else:
             return None
+
     # Check if https://github.com/beetbox/beets/issues/2200 affects below
     alb_type: |
         alb_types = ""
@@ -144,13 +189,14 @@ item_fields:
 # Beets will remove empty directory after import if these are the only things left in it
 # Currently isn't used in here by default, this is because we copy instead of move files
 clutter: ["Thumbs.DB", ".DS_Store", "*.m3u", "*.m3u8", "*.sfv"]
-    
+
 fetchart:
     store_source: yes
     high_resolution: yes
 
 embedart:
     # No auto-embedded album art
+    # We only use the plugin for the clearart function
     auto: no
 
 convert:
@@ -177,17 +223,25 @@ extrafiles:
     patterns:
         artworkdir: 
           - '[aA]rtwork/'
+          - '[aA]rtworks/'
+          - '[aA]rt/'
+          - '[cC]overs'
         scansdir:
           - '[sS]cans/'
         logncue:
           - '*.cue'
+          - '*.CUE'
           - '*.log'
+          - '*.LOG'
           - '*.accurip'
           - '*.txt'
+        others:
+          - '*.pdf'
     paths:
         artworkdir: $albumpath/Artwork
         scansdir: $albumpath/Scans
         logncue: $albumpath/$filename
+        others: $albumpath/$filename
 
 lastgenre:
     count: 5
