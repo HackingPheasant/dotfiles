@@ -154,6 +154,10 @@ autocmd FileType gitcommit setlocal spell
 if has('terminal')
     packadd! termdebug
 endif
+" Comment plugin, uses gc and similar to comment/comment quickly
+if has("patch-9.1.0375") " Plugin added in vim version v9.1.0375
+    packadd! comment
+endif
 
 " Plugin Settings
 
@@ -167,6 +171,19 @@ let g:netrw_browse_split = 3
 " don't show object files
 let g:netrw_list_hide = "\.[oa]$"
 
+" Termdebug config
+" Look at :h g:termdebugger on how to setup other gdb compatabile debuggers
+" Such as rr-debugger
+let g:termdebug_config = {}
+" Default to vertical split
+let g:termdebug_config['wide'] = 1
+" Default to having the Var window shown by default
+let g:termdebug_config['variables_window'] = 1
+let g:termdebug_config['variables_window_height'] = 15
+" And then Asm window below (off by default for now)
+let g:termdebug_config['disasm_window'] = 0
+let g:termdebug_config['disasm_window_height'] = 15
+
 " Custom key remaps
 
 " Force saving files that require root permission 
@@ -174,3 +191,7 @@ cnoremap w!! w !sudo tee > /dev/null %
 
 " Auto add end curly bracket
 inoremap {<Enter> {<Enter>}<Esc>O
+
+" Remember vims indent command to mark current line, format whole file
+" and then jump back to the marked line.
+nnoremap = mzgg=G`z

@@ -56,6 +56,10 @@ PAGER="less"
 unset VISUAL
 
 # libdefaults
+ASAN_OPTIONS=abort_on_error=1:fast_unwind_on_malloc=0:detect_leaks=0
+UBSAN_OPTIONS=print_stacktrace=1
+G_SLICE=always-malloc
+G_DEBUG=gc-friendly
 
 # appdefaults
 MPD_HOST=~/.mpd/socket

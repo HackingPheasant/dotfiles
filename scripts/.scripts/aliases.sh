@@ -39,7 +39,10 @@ alias sudo='sudo ' # for alias expansion in sudo args https://askubuntu.com/a/22
 unfuckawesome() { echo 'awesome.restart()' | awesome-client; }
 alias unpickle='python -m pickletools'
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"' # URL-encode strings
-alias vip='vim -p'
+# Open any files passed to vim in tabs
+alias vim='vim -p'
+# Same as above but with a debugging window opened in the first tab
+alias vimd='vim -c Termdebug vim -p'
 
 # dates
 alias cal='cal -m'
