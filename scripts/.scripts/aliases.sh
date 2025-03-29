@@ -31,6 +31,7 @@ if [[ $DESKTOP_SESSION ]]; then
 	alias logout='env logout'
 fi
 f() { find . \( -name .git -prune \) , \( -iname "*$1*" "${@:2}" \); }
+alias ncdu='ncdu --color dark -e'
 alias py='python'
 alias py2='python2'
 alias py3='python3'
