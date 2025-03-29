@@ -97,6 +97,11 @@
 	excludesfile = ~/.gitignore_global
 	attributesfile = ~/.gitattributes_global
 
+        # Use terminal to ask for username & password
+        # Needs to be empty for terminal to be used.
+        # https://git-scm.com/docs/gitcredentials#_requesting_credentials
+        askPass = ""
+
 	# Treat spaces before tabs and all kinds of trailing whitespace as an error
 	# [default] trailing-space: looks for spaces at the end of a line
 	# [default] space-before-tab: looks for spaces before tabs at the beginning of a line
