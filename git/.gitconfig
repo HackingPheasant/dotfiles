@@ -73,17 +73,9 @@
 
 	mdiff = "!f() { git stash | head -1 | grep -q 'No local changes to save'; x=$?; git merge --no-commit $1 &>/dev/null; git add -u &>/dev/null; git diff --staged; git reset --hard &>/dev/null; test $x -ne 0 && git stash pop &>/dev/null; }; f"
 
-	# Codereview aliases
-	change = codereview change
-	gofmt = codereview gofmt
-	mail = codereview mail
-	pending = codereview pending
-	submit = codereview submit
-	sync = codereview sync
-
-	# from seth vargo https://gist.github.com/sethvargo/6b2f7b592853381690bfe3bd00947e8f
+	# from seth vargo https://gist.github.com/sethvargo/d10a81f219f6469889269af2076b4d39
 	unreleased = "!f() { git fetch --tags && git diff $(git tag | tail -n 1); }; f"
-	up = !git pull origin master && git remote prune origin && git submodule update --init --recursive
+        up = "!f() { git fetch --all; git pull origin HEAD; for upstream in $(git remote); do git remote prune "${upstream}"; done }; f"
 	undo = !git reset HEAD~1 --mixed
 	top = !git log --format=format:%an | sort | uniq -c | sort -r | head -n 20
 
@@ -91,11 +83,8 @@
 	alias=!git config -l | grep ^alias | cut -c 7- | sort
 
 	# from myles borins https://github.com/TheAlphaNerd/Dot-files/blob/master/.gitconfig
-	# github broke some workflow... this will make it less painful
-	patchit = "!f() { echo $1.patch | sed s_pull/[0-9]*/commits_commit_ | xargs curl -L | git am --whitespace=fix; }; f"
-	# patchit = "!f() { curl -L $1.patch | git am --whitespace=fix; }; f"
-	patchit-please = "!f() { echo $1.patch | sed s_pull/[0-9]*/commits_commit_ | xargs curl -L | git am -3 --whitespace=fix; }; f"
-	# patchit-please = "!f() { curl -L $1.patch | git am -3 --whitespace=fix; }; f"
+	patchit = "!f() { curl -L $1.patch | git am --whitespace=fix; }; f"
+	patchit-please = "!f() { curl -L $1.patch | git am -3 --whitespace=fix; }; f"
 
 [apply]
 
