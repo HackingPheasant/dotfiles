@@ -11,7 +11,7 @@ case $OSTYPE in
         ;;
     linux-gnu*)
         # Solus
-        if [[ $(lsb_release -a) =~ Solus ]]; then
+        if [[ $(lsb_release --id) =~ Solus ]]; then
                 # Source solus stateless config
                 # the stateless concept - a strict separation between User and System files for easier OS manageability.
                 source /usr/share/defaults/etc/profile
