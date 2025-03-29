@@ -10,7 +10,7 @@ setlocal equalprg=clang-format\ --style=file
 
 setlocal path=.,,*/include/**2,./*/include/**2
 " setlocal path+=/usr/include/**4,/usr/local/include/**3
-" Disabled 2nd onw for the time being as it took to long
+" Disabled 2nd line for now as it took to long in vim
 
 " Light shorthand/abbreviations
 " So for example #d will change into #define

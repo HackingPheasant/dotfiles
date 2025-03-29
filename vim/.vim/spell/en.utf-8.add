@@ -75,3 +75,9 @@ xrandr
 unix
 sstream
 Vulkan
+3rd
+async
+cpp
+FetchContent
+FindLibrary
+PkgConfig

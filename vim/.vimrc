@@ -1,12 +1,12 @@
 if &compatible
-  " Vim defaults to `compatible` when selecting a vimrc with the command-line
-  " `-u` argument. Override this.
-  set nocompatible
+    " Vim defaults to `compatible` when selecting a vimrc with the command-line
+    " `-u` argument. Override this.
+    set nocompatible
 endif
 
 " Its {current year} we should be able to use a mouse if we want to
 if has('mouse')
-  set mouse=a
+    set mouse=a
 endif
 
 " Insert anywhere and let vim worry about inserting the spaces
@@ -22,22 +22,22 @@ set hlsearch		" Highlight searches
 
 " Make "Visual Block" modemore useful
 if has('reltime')
-  set incsearch
+    set incsearch
 endif
 
 " Put these in an autocmd group, so that you can revert them with:
 " ":augroup vimStartup | au! | augroup END"
 augroup vimStartup
-  au!
+    au!
 
-  " When editing a file, always jump to the last known cursor position.
-  " Don't do it when the position is invalid, when inside an event handler
-  " (happens when dropping a file on gvim) and for a commit message (it's
-  " likely a different one than last time).
-  autocmd BufReadPost *
-    \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-    \ |   exe "normal! g`\""
-    \ | endif
+    " When editing a file, always jump to the last known cursor position.
+    " Don't do it when the position is invalid, when inside an event handler
+    " (happens when dropping a file on gvim) and for a commit message (it's
+    " likely a different one than last time).
+    autocmd BufReadPost *
+                \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+                \ |   exe "normal! g`\""
+                \ | endif
 
 augroup END
 
@@ -56,10 +56,11 @@ set nowrap 		" Don't wrap text
 syntax enable
 
 if has('guicolors')
-  set guicolors
+    set guicolors
 endif
 
-" Preferred colorscheme, it ships with vim
+" Preferred colorscheme, it ships with vim (Since vim9, it's in
+" legacy_colorscheme folder in git. Now we have a copy of it locally
 colorscheme ron
 
 set ruler		" show the cursor position all the time
@@ -87,7 +88,7 @@ set expandtab
 
 " use a more readable diff algorithm
 if has("patch-8.1.0360")
-	set diffopt+=internal,algorithm:patience
+    set diffopt+=internal,algorithm:patience
 endif
 
 set ttimeout		" time out for key codes
@@ -107,9 +108,9 @@ set writebackup          " Protect against crash-during-write
 set nobackup             " But do not persist backup after successful write 
 set backupcopy=auto      " Use rename-and-write-new method whenever safe
 if has("patch-8.1.0251") " Patch required to honor double slash at end
-	" Consolidate the writebackups -- not a big deal either way, 
-        " since they usually get deleted
-	set backupdir^=~/.vim/backup//
+    " Consolidate the writebackups -- not a big deal either way,
+    " since they usually get deleted
+    set backupdir^=~/.vim/backup//
 end
 
 set undofile            " Persist the undo tree for each file
@@ -135,10 +136,10 @@ set termencoding=utf-8
 set complete+=kspell
 
 if has('langmap') && exists('+langremap')
-  " Prevent that the langmap option applies to characters that result from a
-  " mapping.  If set (default), this may break plugins (but it's backward
-  " compatible).
-  set nolangremap
+    " Prevent that the langmap option applies to characters that result from a
+    " mapping.  If set (default), this may break plugins (but it's backward
+    " compatible).
+    set nolangremap
 endif
 
 " TODO: Probably break below into their independent filetype files and keep the

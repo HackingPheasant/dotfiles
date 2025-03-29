@@ -30,3 +30,38 @@ iabbrev #g <C-R>=toupper(substitute(expand("%:p:h:t") . "_" . expand("%:t:r") . 
 " https://stackoverflow.com/a/5437834/4634499
 map <C-c> :s/^/\/\//<Enter>
 map <C-u> :s/^\/\///<Enter>
+
+" Hookup clang-check to <F5>
+" https://clang.llvm.org/docs/HowToSetupToolingForLLVM.html#using-clang-tools
+"
+" TODO: Make it work by finding compile_commands.jsons (currently we have to
+" be at the toplevel of the project so we can look into and find the
+" 'build/*/compile_commands.json' file.
+function! ClangCheckImpl(cmd)
+    if &autowrite | wall | endif
+    echo "Running " . a:cmd . " ..."
+    let l:output = system(a:cmd)
+    cexpr l:output
+    cwindow
+    let w:quickfix_title = a:cmd
+    if v:shell_error != 0
+        cc
+    endif
+    let g:clang_check_last_cmd = a:cmd
+endfunction
+
+function! ClangCheck()
+    let l:filename = expand('%')
+    if l:filename =~ '\.\(cpp\|cxx\|cc\|c\)$'
+        " I normally keep src and build folders seperate, so give the tool the
+        " helping hand it needs to find compile_commands.json
+        " ISSUE: I need to open vim in project root
+        call ClangCheckImpl("clang-check -p build/\* " . l:filename)
+    elseif exists("g:clang_check_last_cmd")
+        call ClangCheckImpl(g:clang_check_last_cmd)
+    else
+        echo "Can't detect file's compilation arguments and no previous clang-check invocation!"
+    endif
+endfunction
+
+nmap <silent> <F5> :call ClangCheck()<CR><CR>
