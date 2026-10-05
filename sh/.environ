@@ -27,13 +27,8 @@ case $PATH in
 *) setpath PATH \
 	"$PREFIX/bin"				\
 	"$HOME/.scripts"			\
-        "$PREFIX/gems/bin"                      \
 	"$PATH"					;
 esac
-
-
-DOTNET_ROOT="$PREFIX/lib/dotnet"
-GEM_HOME="$PREFIX/lib/gems"
 
 # http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
 
@@ -58,13 +53,13 @@ unset VISUAL
 # libdefaults
 ASAN_OPTIONS=abort_on_error=1:fast_unwind_on_malloc=0:detect_leaks=0
 UBSAN_OPTIONS=print_stacktrace=1
+# glib related enivroment vars, mainly set for when I use valgrind.
 G_SLICE=always-malloc
 G_DEBUG=gc-friendly
 
 # appdefaults
-MPD_HOST=~/.mpd/socket
-QT_DEVICE_PIXEL_RATIO=auto
-BUKUSERVER_PER_PAGE=100
+#MPD_HOST=~/.mpd/socket
+#BUKUSERVER_PER_PAGE=100
 
 # local
 

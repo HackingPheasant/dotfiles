@@ -44,6 +44,7 @@ alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.ar
 alias vim='vim -p'
 # Same as above but with a debugging window opened in the first tab
 alias vimd='vim -c Termdebug vim -p'
+git-first-commit() { git log --follow --format=%as "$@" | tail -n1 | cut -c-4; }
 
 # dates
 alias cal='cal -m'
